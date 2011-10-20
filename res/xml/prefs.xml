@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <EditTextPreference android:summary="@string/prefs_summary_hostname" android:title="@string/prefs_title_hostname" android:key="hostname" android:defaultValue="www.xymon.org"/>
+
+    
+
+</PreferenceScreen>

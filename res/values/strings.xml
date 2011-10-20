@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">XymonQV</string>
+    <string name="current_status_prompt">Current Status:</string>
+    <string name="last_updated_prompt">Last Updated:</string>
+    <string name="prefs_title_hostname">HostName</string>
+    <string name="prefs_summary_hostname">Enter the host name of the xymon server</string>
+    <string name="title_prefs">Settings</string>
+</resources>
