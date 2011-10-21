@@ -4,6 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,6 +34,10 @@ import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import android.app.Activity;
 import android.content.Context;
@@ -38,10 +45,15 @@ import android.util.Log;
 import android.widget.Toast;
 
 public class XymonServer {
+	private boolean m_ssl = false;
 	private String m_host;
+	private String m_username;
+	private String m_password;
 	private String m_version = null;
 	private String m_color = null;
 	private String m_last_non_green_body = null;
+	private Date m_last_updated = null;
+	private ArrayList<XymonHost> m_hosts = new ArrayList<XymonHost>();
 	
 	private ClientConnectionManager m_conn_manager;
 	private HttpContext m_http_context;
@@ -49,9 +61,15 @@ public class XymonServer {
 	
 	private static final String TAG = "XymonServer";
 
-	public XymonServer(String host) {
+	public XymonServer(String host, boolean ssl, String username, String password) {
 		super();
+		Log.d(TAG, "constructor(" + host + ", " + Boolean.toString(ssl) + ", " + username + ", " + password + ")");
 		m_host = host;
+		m_ssl = ssl;
+		m_username = username;
+		m_password = password;
+		m_hosts = new ArrayList<XymonHost>();
+		
 		SchemeRegistry scheme_registry = new SchemeRegistry();
 		
 		scheme_registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
@@ -65,7 +83,7 @@ public class XymonServer {
 		HttpProtocolParams.setContentCharset(m_http_params, "utf8");
 		
 		CredentialsProvider credentials_provider = new BasicCredentialsProvider();
-		credentials_provider.setCredentials(new AuthScope(m_host, AuthScope.ANY_PORT), new UsernamePasswordCredentials("darrik", "wiscons9n"));
+		credentials_provider.setCredentials(new AuthScope(m_host, AuthScope.ANY_PORT), new UsernamePasswordCredentials(username, password));
 		m_conn_manager = new ThreadSafeClientConnManager(m_http_params, scheme_registry);
 		m_http_context = new BasicHttpContext();
 		m_http_context.setAttribute("http.auth.credentials-provider", credentials_provider);
@@ -73,6 +91,18 @@ public class XymonServer {
 
 	public String host() {
 		return(m_host);
+	}
+	
+	public boolean ssl() {
+		return(m_ssl);
+	}
+	
+	public String username() {
+		return(m_username);
+	}
+	
+	public String password() {
+		return(m_password);
 	}
 	
 	public String version() {
@@ -85,8 +115,17 @@ public class XymonServer {
 	
 	public String fetch_version() {
 		String body = fetch(root_url());
-		Pattern p = Pattern.compile(">Xymon \\d.\\d.\\d.*<\\/[Aa]");
-		Matcher m = p.matcher(body);
+		if (body == null) {
+			return("unknown");
+		}
+		Document doc = Jsoup.parse(body);
+		Element link = doc.select("table tr td font b a").last();
+		if (link == null) {
+			return("unknown");
+		}
+		String lt = link.text();
+		Pattern p = Pattern.compile("Xymon \\d.\\d.\\d.*");
+		Matcher m = p.matcher(lt);
 		if (m.find()) {
 			Pattern pv = Pattern.compile("\\d\\.\\d\\.\\d");
 			Matcher mv = pv.matcher(m.group());
@@ -100,9 +139,18 @@ public class XymonServer {
 		}
 	}
 	
-	public String root_url() {
-		return("https://" + m_host + "/");
+	public String scheme() {
+		if (m_ssl) {
+			return("https://");
+		} else {
+			return("http://");
+		}
 	}
+	
+	public String root_url() {
+		return(scheme() + m_host + "/");
+	}
+	
 	public String non_green_url_for_version(String version) {
 		String postfix = "/";
 		if (version == "4.3.4") {
@@ -112,15 +160,21 @@ public class XymonServer {
 		} else {
 			postfix = "/bb2.html";
 		}
-		return("https://" + m_host + postfix);
+		return(scheme() + m_host + postfix);
 	}
 	
 	public String fetch_non_green_view() {
 		m_last_non_green_body = fetch(non_green_url_for_version(version()));
-		parse_non_green_body();
+		parse_non_green_body(version());
 		return(m_last_non_green_body);
 	}
 	
+	public boolean refresh() {
+		Log.i(TAG, "refresh()");
+		fetch_non_green_view();
+		return(true);
+	}
+
 	public String color() {
 		if (m_color == null) {
 			fetch_non_green_view();
@@ -128,17 +182,81 @@ public class XymonServer {
 		return(m_color);
 	}
 	
-	public boolean parse_non_green_body()
-	{
-		Pattern p = Pattern.compile("body bgcolor=\"(.*?)\"",Pattern.CASE_INSENSITIVE);
-		Matcher m = p.matcher(m_last_non_green_body);
-		if (m.find()) {
-			String match = m.group().toLowerCase();
-			m_color = match.replace("body bgcolor=\"", "").replace("\"", "");
-			return(true);
-		}
-		return(false);
+	public ArrayList<XymonHost> hosts() {
+		return(m_hosts);
 	}
+	
+	public boolean parse_non_green_body(String version) {
+		Log.d(TAG, "parse_non_green_body(" + version + ")");
+		if (m_last_non_green_body == null) {
+			m_color = "unknown";
+			return(false);
+		}
+		m_hosts.clear();		
+
+		if (version.equals("4.3.0")) {
+			parse_non_green_body_4_3_0();
+		} else if (version.equals("4.2.3")) {
+			parse_non_green_body_4_2_3();
+		} else {
+			// unknown version
+			m_color = "unknown";
+		}
+		
+		m_last_updated = new Date();
+		return(true);
+	}
+	
+	public boolean parse_non_green_body_4_2_3() {
+		Log.d(TAG, "parse_non_green_body_4_2_3()");
+		Document doc = Jsoup.parse(m_last_non_green_body);
+		Element doc_body = doc.select("body").first();
+		
+		m_color = doc_body.attr("bgcolor");
+		
+		Elements non_green_lines = doc.select("table[summary] td[nowrap]");
+		for (Element e : non_green_lines) {
+			String hostname = e.select("a[name]").first().attr("name");
+			XymonHost host = new XymonHost(hostname);
+			Elements red_services = doc.select("table[summary] td[align] a img[src~=(?i)(red|yellow|blue|purple)]");
+			for (Element svc_e : red_services) {
+				String svcinfo = svc_e.attr("alt");
+				String[] parts = svcinfo.split(":");
+				XymonService s = new XymonService(parts);
+				host.add_service(s);
+			}
+			m_hosts.add(host);
+		}
+		return(true);
+	}
+	
+	public boolean parse_non_green_body_4_3_0() {
+		Log.d(TAG, "parse_non_green_body_4_3_0()");
+		Document doc = Jsoup.parse(m_last_non_green_body);
+		Element doc_body = doc.select("body").first();
+
+		m_color = doc_body.attr("bgcolor");
+		
+		Elements non_green_lines = doc.select("tr.line");
+		for (Element e : non_green_lines) {
+			String hostname = e.select("td[nowrap] a[name]").first().attr("name");
+			XymonHost host = new XymonHost(hostname);
+			Elements red_services = e.select("td[align] a img[src~=(?i)(red|yellow|blue|purple)]");
+			for (Element svc_e : red_services) {
+				String svcinfo = svc_e.attr("alt");
+				String[] parts = svcinfo.split(":");
+				XymonService s = new XymonService(parts);
+				host.add_service(s);
+			}
+			m_hosts.add(host);
+		}
+		return(true);
+	}
+	
+	public Date last_updated() {
+		return(m_last_updated);
+	}
+	
 	public String fetch(String url) {
 		Log.d(TAG, "fetching: " + url);
 		HttpClient client = new DefaultHttpClient(m_conn_manager, m_http_params);
@@ -148,11 +266,11 @@ public class XymonServer {
 			return(HttpHelper.readBody(res));
 		} catch (ClientProtocolException e) {
 			// TODO Auto-generated catch block
-			Log.d(TAG, e.getMessage());
+			Log.d(TAG, e.toString() + " : " + e.getMessage());
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			Log.d(TAG, e.getMessage());
+			Log.d(TAG, e.toString() + " : " + e.getMessage());
 			e.printStackTrace();
 		}
 		return(null);

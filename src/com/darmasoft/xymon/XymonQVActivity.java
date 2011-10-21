@@ -1,6 +1,9 @@
 package com.darmasoft.xymon;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -9,6 +12,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -19,11 +23,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class XymonQVActivity extends Activity implements OnSharedPreferenceChangeListener {
+public class XymonQVActivity extends Activity {
 	
 	SharedPreferences prefs;
 	
@@ -36,25 +41,51 @@ public class XymonQVActivity extends Activity implements OnSharedPreferenceChang
     	setContentView(R.layout.status);
     	
     	prefs = PreferenceManager.getDefaultSharedPreferences(this);
-    	prefs.registerOnSharedPreferenceChangeListener(this);
     	
     	String hostname = prefs.getString("hostname", "www.xymon.org");
+    	boolean ssl = prefs.getBoolean("use_ssl", true);
+    	String username = prefs.getString("username", "");
+    	String password = prefs.getString("password", "");
+    	load_status();
+    }
+
+    public void load_status() {
+    	ProgressDialog pd = ProgressDialog.show(this, "Loading", "Please wait...", true);
     	
-    	XymonServer server = new XymonServer(hostname);
-    	ScrollView sv = (ScrollView) findViewById(R.id.status);
-    	TextView tv = new TextView(getApplicationContext());
-    	String c = server.color();
-    	tv.setText(c);
-    	Log.d(TAG, "COLOR [" + c + "]");
-    	if (c.equals("red")) {
-    		Log.d(TAG, "GOT HERE");
-    		findViewById(R.id.status_layout).setBackgroundColor(Color.RED);
-    	} else {
-    		findViewById(R.id.status_layout).setBackgroundColor(Color.GREEN);
-    	}
-    	sv.addView(tv);
+       	XymonServer server = ((XymonQVApplication) getApplication()).xymon_server();
+       	server.refresh();
+       	update_view();
+       	
+       	pd.dismiss();
     }
     
+    private void update_view() {
+       	XymonServer server = ((XymonQVApplication) getApplication()).xymon_server();
+       	String c = server.color();
+       	Date d = server.last_updated();
+       	String date = "NEVER";
+       	if (d != null) {
+           	date = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss").format(d);
+       	}
+       	((TextView) findViewById(R.id.hostname_line)).setText(server.host());
+       	((TextView) findViewById(R.id.status_line)).setText(c.toUpperCase());
+       	((TextView) findViewById(R.id.updated_line)).setText(date);
+       	setBackgroundColor(c);
+       	
+       	List<XymonHost> hosts = server.hosts();
+       	Log.d(TAG, "found " + Integer.toString(hosts.size()) + " hosts");
+
+       	LinearLayout ll = (LinearLayout) findViewById(R.id.host_line_container);
+       	ll.removeAllViews();
+       	
+       	for (XymonHost h : hosts) {
+       		for (XymonService s : h.services()) {
+       			XymonServiceView xsv = s.view(this);
+       			ll.addView(xsv);	
+       		}
+       	}
+
+    }
     public boolean onCreateOptionsMenu(Menu menu) {
     	MenuInflater inflater = getMenuInflater();
     	inflater.inflate(R.menu.menu, menu);
@@ -66,12 +97,16 @@ public class XymonQVActivity extends Activity implements OnSharedPreferenceChang
     	case R.id.itemPrefs:
     		startActivity(new Intent(this, PrefsActivity.class));
     		break;
+    	case R.id.itemRefresh:
+    		load_status();
+    		break;
     	}
     	return(true);
     }
     
-    // shared preferences methods
-    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-    	Log.d(TAG, "pref set: " + key + " : " + prefs.getString(key, ""));
+    public void setBackgroundColor(String c) {
+    	Log.d(TAG, "COLOR [" + c + "]");
+    	findViewById(R.id.color_indicator).setBackgroundColor(ColorHelper.colorForString(c));
     }
+
 }

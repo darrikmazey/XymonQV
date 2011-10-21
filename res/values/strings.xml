@@ -6,4 +6,12 @@
     <string name="prefs_title_hostname">HostName</string>
     <string name="prefs_summary_hostname">Enter the host name of the xymon server</string>
     <string name="title_prefs">Settings</string>
+    <string name="prefs_title_username">Username</string>
+    <string name="prefs_summary_username">Enter your username</string>
+    <string name="prefs_title_ssl">Use SSL?</string>
+    <string name="prefs_summary_ssl">Use SSL to connect to xymon</string>
+    <string name="prefs_title_password">Password</string>
+    <string name="prefs_summary_password">Password</string>
+    <string name="prefs_title_category_ssl">SSL Options</string>
+    <string name="title_refresh">Refresh</string>
 </resources>

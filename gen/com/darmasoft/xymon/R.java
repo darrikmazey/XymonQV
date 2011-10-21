@@ -11,12 +11,19 @@ public final class R {
     public static final class attr {
     }
     public static final class drawable {
-        public static final int icon=0x7f020000;
+        public static final int ic_menu_refresh=0x7f020000;
+        public static final int icon=0x7f020001;
+        public static final int text_view_border=0x7f020002;
     }
     public static final class id {
-        public static final int itemPrefs=0x7f070002;
-        public static final int status=0x7f070001;
-        public static final int status_layout=0x7f070000;
+        public static final int color_indicator=0x7f070001;
+        public static final int host_line_container=0x7f070005;
+        public static final int hostname_line=0x7f070000;
+        public static final int itemPrefs=0x7f070006;
+        public static final int itemRefresh=0x7f070007;
+        public static final int scroll_view=0x7f070004;
+        public static final int status_line=0x7f070002;
+        public static final int updated_line=0x7f070003;
     }
     public static final class layout {
         public static final int status=0x7f030000;
@@ -29,8 +36,16 @@ public final class R {
         public static final int current_status_prompt=0x7f050001;
         public static final int last_updated_prompt=0x7f050002;
         public static final int prefs_summary_hostname=0x7f050004;
+        public static final int prefs_summary_password=0x7f05000b;
+        public static final int prefs_summary_ssl=0x7f050009;
+        public static final int prefs_summary_username=0x7f050007;
+        public static final int prefs_title_category_ssl=0x7f05000c;
         public static final int prefs_title_hostname=0x7f050003;
+        public static final int prefs_title_password=0x7f05000a;
+        public static final int prefs_title_ssl=0x7f050008;
+        public static final int prefs_title_username=0x7f050006;
         public static final int title_prefs=0x7f050005;
+        public static final int title_refresh=0x7f05000d;
     }
     public static final class xml {
         public static final int prefs=0x7f040000;
