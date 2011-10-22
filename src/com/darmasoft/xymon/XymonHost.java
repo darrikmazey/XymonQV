@@ -1,7 +1,6 @@
 package com.darmasoft.xymon;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class XymonHost {
 

@@ -11,7 +11,7 @@ public class XymonQVApplication extends Application implements
 
 	private static final String TAG = "XymonQVApplication";
 	
-	private SharedPreferences m_prefs;
+	public SharedPreferences prefs;
 	private XymonServer m_server = null;
 	
 	public XymonQVApplication() {
@@ -19,20 +19,24 @@ public class XymonQVApplication extends Application implements
 
 	public void onCreate() {
 		super.onCreate();
-		this.m_prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		this.m_prefs.registerOnSharedPreferenceChangeListener(this);
+		this.prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		this.prefs.registerOnSharedPreferenceChangeListener(this);
 		Log.i(TAG, "created");
+	}
+	
+	public int update_interval() {
+		return(Integer.valueOf(prefs.getString("update_interval", "0")));
 	}
 	
 	public XymonServer xymon_server() {
 		if (m_server == null) {
 			
-			String hostname = m_prefs.getString("hostname", "www.xymon.org");
-			boolean ssl = m_prefs.getBoolean("use_ssl", true);
-			String username = m_prefs.getString("username", "");
-			String password = m_prefs.getString("password", "");
+			String hostname = prefs.getString("hostname", "www.xymon.org");
+			boolean ssl = prefs.getBoolean("use_ssl", true);
+			String username = prefs.getString("username", "");
+			String password = prefs.getString("password", "");
 			
-			m_server = new XymonServer(hostname, ssl, username, password);
+			m_server = new XymonServer(hostname, ssl, username, password, this);
 		}
 		return(m_server);
 	}
@@ -42,7 +46,7 @@ public class XymonQVApplication extends Application implements
 	}
 	
 	@Override
-	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
+	public synchronized void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
 			String key) {
 		m_server = null;
 	}

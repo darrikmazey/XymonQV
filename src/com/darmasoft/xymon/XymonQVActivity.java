@@ -1,22 +1,13 @@
 package com.darmasoft.xymon;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -24,9 +15,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class XymonQVActivity extends Activity {
 	
@@ -42,21 +31,13 @@ public class XymonQVActivity extends Activity {
     	
     	prefs = PreferenceManager.getDefaultSharedPreferences(this);
     	
-    	String hostname = prefs.getString("hostname", "www.xymon.org");
-    	boolean ssl = prefs.getBoolean("use_ssl", true);
-    	String username = prefs.getString("username", "");
-    	String password = prefs.getString("password", "");
     	load_status();
     }
 
     public void load_status() {
-    	ProgressDialog pd = ProgressDialog.show(this, "Loading", "Please wait...", true);
-    	
        	XymonServer server = ((XymonQVApplication) getApplication()).xymon_server();
-       	server.refresh();
+       	server.load_last_data();
        	update_view();
-       	
-       	pd.dismiss();
     }
     
     private void update_view() {
@@ -72,14 +53,18 @@ public class XymonQVActivity extends Activity {
        	((TextView) findViewById(R.id.updated_line)).setText(date);
        	setBackgroundColor(c);
        	
-       	List<XymonHost> hosts = server.hosts();
+       	ArrayList<XymonHost> hosts = server.hosts();
        	Log.d(TAG, "found " + Integer.toString(hosts.size()) + " hosts");
 
        	LinearLayout ll = (LinearLayout) findViewById(R.id.host_line_container);
        	ll.removeAllViews();
        	
        	for (XymonHost h : hosts) {
+       		Log.d(TAG, "HOST: " + h.hostname());
+       		Log.d(TAG, "SERVICES: " + Integer.toString(h.services().size()));
+       		
        		for (XymonService s : h.services()) {
+       			Log.d(TAG, "SERVICE: " + s.name());
        			XymonServiceView xsv = s.view(this);
        			ll.addView(xsv);	
        		}
@@ -99,6 +84,12 @@ public class XymonQVActivity extends Activity {
     		break;
     	case R.id.itemRefresh:
     		load_status();
+    		break;
+    	case R.id.itemStartService:
+    		startService(new Intent(this, XymonQVService.class));
+    		break;
+    	case R.id.itemStopService:
+    		stopService(new Intent(this, XymonQVService.class));
     		break;
     	}
     	return(true);

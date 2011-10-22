@@ -1,16 +1,11 @@
 package com.darmasoft.xymon;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
 import org.apache.http.auth.AuthScope;
@@ -33,16 +28,13 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
-import org.apache.http.util.EntityUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 public class XymonServer {
 	private boolean m_ssl = false;
@@ -54,6 +46,7 @@ public class XymonServer {
 	private String m_last_non_green_body = null;
 	private Date m_last_updated = null;
 	private ArrayList<XymonHost> m_hosts = new ArrayList<XymonHost>();
+	private Context m_context;
 	
 	private ClientConnectionManager m_conn_manager;
 	private HttpContext m_http_context;
@@ -61,7 +54,7 @@ public class XymonServer {
 	
 	private static final String TAG = "XymonServer";
 
-	public XymonServer(String host, boolean ssl, String username, String password) {
+	public XymonServer(String host, boolean ssl, String username, String password, Context context) {
 		super();
 		Log.d(TAG, "constructor(" + host + ", " + Boolean.toString(ssl) + ", " + username + ", " + password + ")");
 		m_host = host;
@@ -69,6 +62,7 @@ public class XymonServer {
 		m_username = username;
 		m_password = password;
 		m_hosts = new ArrayList<XymonHost>();
+		m_context = context;
 		
 		SchemeRegistry scheme_registry = new SchemeRegistry();
 		
@@ -87,8 +81,19 @@ public class XymonServer {
 		m_conn_manager = new ThreadSafeClientConnManager(m_http_params, scheme_registry);
 		m_http_context = new BasicHttpContext();
 		m_http_context.setAttribute("http.auth.credentials-provider", credentials_provider);
+		
 	}
 
+	public boolean load_last_data() {
+		Log.d(TAG, "load_last_data()");
+		DBHelper dbHelper = new DBHelper(m_context);
+		
+		m_hosts = dbHelper.load_last_hosts();
+		m_color = dbHelper.load_last_color();
+		m_last_updated = dbHelper.load_last_updated();
+		
+		return(true);
+	}
 	public String host() {
 		return(m_host);
 	}
@@ -177,7 +182,7 @@ public class XymonServer {
 
 	public String color() {
 		if (m_color == null) {
-			fetch_non_green_view();
+			refresh();
 		}
 		return(m_color);
 	}

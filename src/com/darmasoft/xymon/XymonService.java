@@ -25,6 +25,14 @@ public class XymonService {
 		}
 	}
 	
+	public XymonService(String svc_name, String svc_color, boolean svc_acked, String svc_duration) {
+		super();
+		m_svc_name = svc_name;
+		m_svc_color = svc_color;
+		m_svc_duration = svc_duration;
+		m_svc_acked = svc_acked;
+	}
+	
 	public XymonHost host() {
 		return(m_svc_host);
 	}
