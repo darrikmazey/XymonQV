@@ -3,7 +3,7 @@
       package="com.darmasoft.xymon"
       android:versionCode="1"
       android:versionName="1.0">
-    <uses-sdk android:minSdkVersion="10" />
+    <uses-sdk android:minSdkVersion="8" />
 
     <permission
         android:name="com.darmasoft.xymon.SEND_DATA_NOTIFICATION"
