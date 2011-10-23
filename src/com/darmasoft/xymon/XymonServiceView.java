@@ -1,8 +1,6 @@
 package com.darmasoft.xymon;
 
-import android.R.color;
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;

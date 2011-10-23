@@ -151,6 +151,7 @@ public class DBHelper extends SQLiteOpenHelper {
 			load_services_for_host(host);
 			hosts.add(host);
 		}
+		cursor.close();
 		db.close();
 		
 		return(hosts);
@@ -174,6 +175,8 @@ public class DBHelper extends SQLiteOpenHelper {
 			XymonService svc = new XymonService(svc_name, svc_color, false, svc_duration);
 			host.add_service(svc);
 		}
+		cursor.close();
+		db.close();
 		return(count);
 	}
 	
@@ -191,7 +194,7 @@ public class DBHelper extends SQLiteOpenHelper {
 				last_updated = null;
 			}
 		}
-		
+		cursor.close();
 		db.close();
 		
 		return(last_updated);
@@ -207,7 +210,7 @@ public class DBHelper extends SQLiteOpenHelper {
 			cursor.moveToFirst();
 			color = cursor.getString(0);
 		}
-		
+		cursor.close();
 		db.close();
 		
 		return(color);

@@ -120,7 +120,7 @@ public class XymonServer {
 	}
 	
 	public String version() {
-		if (m_version == null) {
+		if (m_version == null || m_version == "unknown") {
 			m_version = fetch_version();
 			Log.d(TAG, "FOUND VERSION: " + m_version);
 		}
@@ -183,9 +183,10 @@ public class XymonServer {
 	
 	public String non_green_url_for_version(String version) {
 		String postfix = "/";
-		if (version == "4.3.4") {
+		// TODO: should these be based on minor version, and not release?
+		if (version.equals("4.3.4")) {
 			postfix = "/nongreen.html";
-		} else if (version == "4.3.5") {
+		} else if (version.equals("4.3.5")) {
 			postfix = "/nongreen.html";
 		} else {
 			postfix = "/bb2.html";
@@ -224,6 +225,10 @@ public class XymonServer {
 		}
 		m_hosts.clear();		
 
+		/* TODO: should these be based on minor version, and not release?
+		 * if so, then the parse methods should reflect that (ie, 4_3 and 4_2).
+		 */
+		//if (version.substring(0,3).equals("4.3")) { //Supports any 4.3 minor version
 		if (version.equals("4.3.0")) {
 			parse_non_green_body_4_3_0();
 		} else if (version.equals("4.2.3")) {
