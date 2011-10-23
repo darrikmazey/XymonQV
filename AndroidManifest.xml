@@ -5,8 +5,23 @@
       android:versionName="1.0">
     <uses-sdk android:minSdkVersion="10" />
 
+    <permission
+        android:name="com.darmasoft.xymon.SEND_DATA_NOTIFICATION"
+        android:label="@string/perms_send_data_notification_title"
+        android:description="@string/perms_send_data_notification_desc"
+        android:permissionGroup="android.permission-group.PERSONAL_INFO"
+        android:protectionLevel="normal" />
+     <permission
+        android:name="com.darmasoft.xymon.RECEIVE_DATA_NOTIFICATION"
+        android:label="@string/perms_receive_data_notification_title"
+        android:description="@string/perms_receive_data_notification_desc"
+        android:permissionGroup="android.permission-group.PERSONAL_INFO"
+        android:protectionLevel="normal" />
+    
 	<uses-permission android:name="android.permission.INTERNET" />
-	
+	<uses-permission android:name="com.darmasoft.xymon.SEND_DATA_NOTIFICATION" />
+	<uses-permission android:name="com.darmasoft.xymon.RECEIVE_DATA_NOTIFICATION" />
+		
     <application android:icon="@drawable/icon" android:label="@string/app_name"
         android:debuggable="true"
         android:name=".XymonQVApplication">

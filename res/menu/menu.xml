@@ -6,6 +6,7 @@
         <item android:id="@+id/itemStartService" android:title="@string/prefs_title_start_service"></item>
         <item android:id="@+id/itemStopService" android:title="@string/prefs_title_stop_service"></item>
     </group>
+    <item android:id="@+id/itemClearHistory" android:title="@string/menu_title_clear_history"></item>
 
     
 

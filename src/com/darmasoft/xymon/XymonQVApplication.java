@@ -29,6 +29,7 @@ public class XymonQVApplication extends Application implements
 	}
 	
 	public XymonServer xymon_server() {
+		Log.d(TAG, "xymon_server()");
 		if (m_server == null) {
 			
 			String hostname = prefs.getString("hostname", "www.xymon.org");

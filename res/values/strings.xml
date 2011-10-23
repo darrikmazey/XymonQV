@@ -19,17 +19,22 @@
     <string name="prefs_title_update_interval">Update Interval</string>
     <string-array name="interval_strings">
         <item >Manual</item>
-        <item >10 Seconds</item>
+        <item >DEBUG</item>
         <item >2 Minutes</item>
         <item >5 Minutes</item>
         <item >10 Minutes</item>
     </string-array>
     <string-array name="interval_values">
         <item >0</item>
-        <item >10000</item>
+        <item >45000</item>
         <item >120000</item>
         <item >600000</item>
         <item >1200000</item>
     </string-array>
     <string name="prefs_dialog_title_update_interval">How often should xymon be checked?</string>
+    <string name="menu_title_clear_history">Clear History</string>
+    <string name="perms_send_data_notification_title">Send Xymon Data</string>
+    <string name="perms_receive_data_notification_title">Receive Xymon Data</string>
+    <string name="perms_send_data_notification_desc">Send notifications of new data from Xymon</string>
+    <string name="perms_receive_data_notification_desc">Receive notifications of new data from Xymon</string>
 </resources>

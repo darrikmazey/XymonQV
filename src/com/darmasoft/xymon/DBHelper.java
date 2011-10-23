@@ -41,13 +41,10 @@ public class DBHelper extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 		String sql = "create table " + HOST_TABLE + " ( " + C_HOSTNAME + " text primary key, " + C_CREATED_AT + " int)";
 		db.execSQL(sql);
-		Log.d(TAG, "SQL: " + sql);
 		sql = "create table " + STATUS_TABLE + " ( " + C_ID + " int primary key, " + C_HOST_ID + " text, " + C_SVC_NAME + " text, " + C_COLOR + " text, " + C_DURATION + " int, " + C_CREATED_AT + " text)"; 
 		db.execSQL(sql);
-		Log.d(TAG, "SQL: " + sql);
 		sql = "create table " + RUN_TABLE + " ( " + C_CREATED_AT + " text primary key, " + C_COLOR + " text)";  
 		db.execSQL(sql);
-		Log.d(TAG, "SQL: " + sql);
 	}
 
 	@Override
@@ -57,7 +54,27 @@ public class DBHelper extends SQLiteOpenHelper {
 		onCreate(db);
 	}
 
-	public boolean insert(XymonHost host, Date last_updated) {
+	public synchronized boolean delete_all_statuses() {
+		SQLiteDatabase db = this.getWritableDatabase();
+		
+		db.execSQL("delete from statuses");
+		return(true);
+	}
+	
+	public synchronized boolean delete_all_hosts() {
+		SQLiteDatabase db = this.getWritableDatabase();
+		
+		db.execSQL("delete from hosts");
+		return(true);
+	}
+	
+	public synchronized boolean delete_all_runs() {
+		SQLiteDatabase db = this.getWritableDatabase();
+		
+		db.execSQL("delete from runs");
+		return(true);
+	}
+	public synchronized boolean insert(XymonHost host, Date last_updated) {
 		ContentValues values = new ContentValues();
 		values.clear();
 
@@ -78,7 +95,7 @@ public class DBHelper extends SQLiteOpenHelper {
 		return(true);
 	}
 	
-	public boolean insert(XymonService service, Date last_updated) {
+	public synchronized boolean insert(XymonService service, Date last_updated) {
 		ContentValues values = new ContentValues();
 		values.clear();
 
@@ -100,7 +117,7 @@ public class DBHelper extends SQLiteOpenHelper {
 		
 		return(true);
 	}
-	public boolean insert_run(Date last_updated, String color) {
+	public synchronized boolean insert_run(Date last_updated, String color) {
 		ContentValues values = new ContentValues();
 		values.clear();
 		
@@ -126,9 +143,6 @@ public class DBHelper extends SQLiteOpenHelper {
 		String sql = "select distinct(hosts.hostname) from hosts, statuses where statuses.created_at in (select max(created_at) from runs) " +
 			"and hosts.hostname = statuses.host_id";
 		Cursor cursor = db.rawQuery(sql, null);
-		Log.d(TAG, "SQL: " + sql);
-		Log.d(TAG, "ROWS: " + Integer.toString(cursor.getCount()));
-		Log.d(TAG, "COLUMNS: " + Integer.toString(cursor.getColumnCount()));
 		
 		ArrayList<XymonHost> hosts = new ArrayList<XymonHost>();
 		
@@ -152,9 +166,6 @@ public class DBHelper extends SQLiteOpenHelper {
 			"AND statuses.host_id = '" + host.hostname() + "'";
 		Cursor cursor = db.rawQuery(sql, null);
 		int count = cursor.getCount();
-		Log.d(TAG, "SQL: " + sql);
-		Log.d(TAG, "ROWS: " + Integer.toString(count));
-		Log.d(TAG, "COLUMNS: " + Integer.toString(cursor.getColumnCount()));
 		
 		while (cursor.moveToNext()) {
 			String svc_name = cursor.getString(2);
@@ -171,9 +182,6 @@ public class DBHelper extends SQLiteOpenHelper {
 		String sql = "SELECT " + DBHelper.C_CREATED_AT + " FROM " + DBHelper.RUN_TABLE + " ORDER BY CREATED_AT DESC LIMIT 1";
 		Cursor cursor = db.rawQuery(sql, null);
 		Date last_updated = null;
-		Log.d(TAG, "SQL: " + sql);
-		Log.d(TAG, "ROWS: " + Integer.toString(cursor.getCount()));
-		Log.d(TAG, "COLUMNS: " + Integer.toString(cursor.getColumnCount()));
 		
 		if (cursor.getCount() == 1) {
 			cursor.moveToFirst();
@@ -194,9 +202,6 @@ public class DBHelper extends SQLiteOpenHelper {
 		String sql = "SELECT " + DBHelper.C_COLOR + " FROM " + DBHelper.RUN_TABLE + " ORDER BY CREATED_AT DESC LIMIT 1";
 		Cursor cursor = db.rawQuery(sql, null);
 		String color = "black";
-		Log.d(TAG, "SQL: " + sql);
-		Log.d(TAG, "ROWS: " + Integer.toString(cursor.getCount()));
-		Log.d(TAG, "COLUMNS: " + Integer.toString(cursor.getColumnCount()));
 		
 		if (cursor.getCount() == 1) {
 			cursor.moveToFirst();
@@ -207,4 +212,5 @@ public class DBHelper extends SQLiteOpenHelper {
 		
 		return(color);
 	}
+	
 }

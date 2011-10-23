@@ -28,10 +28,10 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import org.htmlcleaner.CleanerProperties;
+import org.htmlcleaner.HtmlCleaner;
+import org.htmlcleaner.TagNode;
+import org.htmlcleaner.XPatherException;
 
 import android.content.Context;
 import android.util.Log;
@@ -83,6 +83,15 @@ public class XymonServer {
 		m_http_context.setAttribute("http.auth.credentials-provider", credentials_provider);
 		
 	}
+	
+	public synchronized boolean clear_history() {
+		Log.d(TAG, "clear_history()");
+		DBHelper dbHelper = new DBHelper(m_context);
+		dbHelper.delete_all_statuses();
+		dbHelper.delete_all_hosts();
+		dbHelper.delete_all_runs();
+		return(true);
+	}
 
 	public boolean load_last_data() {
 		Log.d(TAG, "load_last_data()");
@@ -123,12 +132,28 @@ public class XymonServer {
 		if (body == null) {
 			return("unknown");
 		}
-		Document doc = Jsoup.parse(body);
-		Element link = doc.select("table tr td font b a").last();
+		
+		CleanerProperties props = new CleanerProperties();
+		props.setAllowHtmlInsideAttributes(true);
+		props.setAllowMultiWordAttributes(true);
+		props.setRecognizeUnicodeChars(true);
+		props.setOmitComments(true);
+		
+		TagNode node = new HtmlCleaner(props).clean(body);
+			
+		TagNode link;
+		
+		try {
+			link = ((TagNode) node.evaluateXPath("//table//tr/td/font/b/a")[0]);
+		} catch (XPatherException e) {
+			// TODO Auto-generated catch block
+			return("unknown");
+		}
+		
 		if (link == null) {
 			return("unknown");
 		}
-		String lt = link.text();
+		String lt = link.getText().toString();
 		Pattern p = Pattern.compile("Xymon \\d.\\d.\\d.*");
 		Matcher m = p.matcher(lt);
 		if (m.find()) {
@@ -214,46 +239,97 @@ public class XymonServer {
 	
 	public boolean parse_non_green_body_4_2_3() {
 		Log.d(TAG, "parse_non_green_body_4_2_3()");
-		Document doc = Jsoup.parse(m_last_non_green_body);
-		Element doc_body = doc.select("body").first();
 		
-		m_color = doc_body.attr("bgcolor");
-		
-		Elements non_green_lines = doc.select("table[summary] td[nowrap]");
-		for (Element e : non_green_lines) {
-			String hostname = e.select("a[name]").first().attr("name");
-			XymonHost host = new XymonHost(hostname);
-			Elements red_services = doc.select("table[summary] td[align] a img[src~=(?i)(red|yellow|blue|purple)]");
-			for (Element svc_e : red_services) {
-				String svcinfo = svc_e.attr("alt");
-				String[] parts = svcinfo.split(":");
-				XymonService s = new XymonService(parts);
-				host.add_service(s);
+		try {
+			CleanerProperties props = new CleanerProperties();
+			props.setAllowHtmlInsideAttributes(true);
+			props.setAllowMultiWordAttributes(true);
+			props.setRecognizeUnicodeChars(true);
+			props.setOmitComments(true);
+			
+			TagNode doc = new HtmlCleaner(props).clean(m_last_non_green_body);
+				
+			TagNode doc_body = ((TagNode) doc.evaluateXPath("//body")[0]);
+			
+			m_color = doc_body.getAttributeByName("bgcolor");
+			
+			Object[] non_green_lines = doc.evaluateXPath("//table[@summary]//td[@nowrap]");
+			Log.d(TAG, String.format("found %d non green lines", non_green_lines.length));
+			
+			for (Object o : non_green_lines) {
+				TagNode e = (TagNode) o;
+				String hostname = ((TagNode) e.evaluateXPath("//a[@name]")[0]).getAttributeByName("name");
+				XymonHost host = new XymonHost(hostname);
+				Object[] red_services = doc.evaluateXPath("//table[@summary]//td[@align]/a/img[@src]");
+				Log.d(TAG, String.format("found %d non green services", red_services.length));
+				for (Object svc_o : red_services) {
+					TagNode svc_e = (TagNode) svc_o;
+					
+					String svc_src = svc_e.getAttributeByName("src");
+					Pattern p = Pattern.compile("(?i)(red|yellow|blue|purple)");
+					Matcher m = p.matcher(svc_src);
+					
+					if (m.find()) {
+						String svcinfo = svc_e.getAttributeByName("alt");
+						String[] parts = svcinfo.split(":");
+						XymonService s = new XymonService(parts);
+						host.add_service(s);
+					}
+				}
+				m_hosts.add(host);
 			}
-			m_hosts.add(host);
+		} catch (XPatherException e) {
+			Log.d(TAG, e.getMessage());
+			e.printStackTrace();
 		}
 		return(true);
 	}
 	
 	public boolean parse_non_green_body_4_3_0() {
-		Log.d(TAG, "parse_non_green_body_4_3_0()");
-		Document doc = Jsoup.parse(m_last_non_green_body);
-		Element doc_body = doc.select("body").first();
 
-		m_color = doc_body.attr("bgcolor");
-		
-		Elements non_green_lines = doc.select("tr.line");
-		for (Element e : non_green_lines) {
-			String hostname = e.select("td[nowrap] a[name]").first().attr("name");
-			XymonHost host = new XymonHost(hostname);
-			Elements red_services = e.select("td[align] a img[src~=(?i)(red|yellow|blue|purple)]");
-			for (Element svc_e : red_services) {
-				String svcinfo = svc_e.attr("alt");
-				String[] parts = svcinfo.split(":");
-				XymonService s = new XymonService(parts);
-				host.add_service(s);
+		try {
+			CleanerProperties props = new CleanerProperties();
+			props.setAllowHtmlInsideAttributes(true);
+			props.setAllowMultiWordAttributes(true);
+			props.setRecognizeUnicodeChars(true);
+			props.setOmitComments(true);
+			
+			TagNode doc = new HtmlCleaner(props).clean(m_last_non_green_body);
+
+			TagNode doc_body = ((TagNode) doc.evaluateXPath("body")[0]);
+			
+			m_color = doc_body.getAttributeByName("bgcolor");
+			
+			Object[] non_green_lines = doc.evaluateXPath("//tr[@class='line']");
+			Log.d(TAG, "found " + Integer.toString(non_green_lines.length) + " non green lines");
+			for (Object o : non_green_lines) {
+				TagNode e = (TagNode) o;
+				String hostname = ((TagNode) e.evaluateXPath("//td[@nowrap]/a[@name]")[0]).getAttributeByName("name");
+				Log.d(TAG, "found hostname: " + hostname);
+				XymonHost host = new XymonHost(hostname);
+				Object[] non_green_services = e.evaluateXPath("//td[@align]/a/img[@src]");
+				Log.d(TAG, "found " + Integer.toString(non_green_services.length) + " non-green services");
+				for (Object svc_o : non_green_services) {
+					TagNode svc_e = (TagNode) svc_o;
+					
+					String svc_src = svc_e.getAttributeByName("src");
+					Pattern p = Pattern.compile("(?i)(red|yellow|blue|purple)");
+					Matcher m = p.matcher(svc_src);
+					
+					if (m.find()) {
+						String svcinfo = svc_e.getAttributeByName("alt");
+						Log.d(TAG, "svcinfo: [" + svcinfo + "]");
+						String[] parts = svcinfo.split(":");
+						XymonService s = new XymonService(parts);
+						host.add_service(s);
+					}
+				}
+				
+				m_hosts.add(host);
 			}
-			m_hosts.add(host);
+		} catch (XPatherException e) {
+			Log.d(TAG, e.getMessage());
+			e.printStackTrace();
 		}
 		return(true);
 	}
@@ -263,7 +339,6 @@ public class XymonServer {
 	}
 	
 	public String fetch(String url) {
-		Log.d(TAG, "fetching: " + url);
 		HttpClient client = new DefaultHttpClient(m_conn_manager, m_http_params);
 		HttpGet get = new HttpGet(url);
 		try {
@@ -271,11 +346,11 @@ public class XymonServer {
 			return(HttpHelper.readBody(res));
 		} catch (ClientProtocolException e) {
 			// TODO Auto-generated catch block
-			Log.d(TAG, e.toString() + " : " + e.getMessage());
+			Log.e(TAG, e.toString() + " : " + e.getMessage());
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			Log.d(TAG, e.toString() + " : " + e.getMessage());
+			Log.e(TAG, e.toString() + " : " + e.getMessage());
 			e.printStackTrace();
 		}
 		return(null);

@@ -6,7 +6,10 @@ import java.util.Date;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -19,6 +22,23 @@ import android.widget.TextView;
 
 public class XymonQVActivity extends Activity {
 	
+	private XymonQVReceiver m_receiver;
+	private IntentFilter m_filter;
+	
+	@Override
+	protected void onPause() {
+		Log.d(TAG, "onPause()");
+		super.onPause();
+		unregisterReceiver(m_receiver);
+	}
+
+	@Override
+	protected void onResume() {
+		Log.d(TAG, "onResume()");
+		super.onResume();
+		registerReceiver(m_receiver, m_filter);
+	}
+
 	SharedPreferences prefs;
 	
 	private static final String TAG = "XymonQVActivity";
@@ -31,6 +51,9 @@ public class XymonQVActivity extends Activity {
     	
     	prefs = PreferenceManager.getDefaultSharedPreferences(this);
     	
+    	m_receiver = new XymonQVReceiver();
+    	m_filter = new IntentFilter("com.darmasoft.xymon.NEW_DATA");
+    	
     	load_status();
     }
 
@@ -39,10 +62,10 @@ public class XymonQVActivity extends Activity {
        	server.load_last_data();
        	update_view();
     }
-    
+
     private void update_view() {
-       	XymonServer server = ((XymonQVApplication) getApplication()).xymon_server();
-       	String c = server.color();
+      	XymonServer server = ((XymonQVApplication) getApplication()).xymon_server();
+        	String c = server.color();
        	Date d = server.last_updated();
        	String date = "NEVER";
        	if (d != null) {
@@ -54,17 +77,12 @@ public class XymonQVActivity extends Activity {
        	setBackgroundColor(c);
        	
        	ArrayList<XymonHost> hosts = server.hosts();
-       	Log.d(TAG, "found " + Integer.toString(hosts.size()) + " hosts");
 
        	LinearLayout ll = (LinearLayout) findViewById(R.id.host_line_container);
        	ll.removeAllViews();
        	
-       	for (XymonHost h : hosts) {
-       		Log.d(TAG, "HOST: " + h.hostname());
-       		Log.d(TAG, "SERVICES: " + Integer.toString(h.services().size()));
-       		
+       	for (XymonHost h : hosts) {       		
        		for (XymonService s : h.services()) {
-       			Log.d(TAG, "SERVICE: " + s.name());
        			XymonServiceView xsv = s.view(this);
        			ll.addView(xsv);	
        		}
@@ -91,13 +109,22 @@ public class XymonQVActivity extends Activity {
     	case R.id.itemStopService:
     		stopService(new Intent(this, XymonQVService.class));
     		break;
+    	case R.id.itemClearHistory:
+    		XymonServer server = ((XymonQVApplication) getApplication()).xymon_server();
+    		server.clear_history();
+    		load_status();
     	}
     	return(true);
     }
     
     public void setBackgroundColor(String c) {
-    	Log.d(TAG, "COLOR [" + c + "]");
     	findViewById(R.id.color_indicator).setBackgroundColor(ColorHelper.colorForString(c));
     }
 
+    class XymonQVReceiver extends BroadcastReceiver {
+    	@Override
+    	public void onReceive(Context context, Intent intent) {
+    		Log.d("XymonQVReceiver", "onReceive()");
+    	}
+    }
 }

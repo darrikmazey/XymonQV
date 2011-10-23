@@ -22,6 +22,11 @@ public class XymonService {
 			m_svc_color = parts[1];
 			m_svc_acked = true;
 			m_svc_duration = parts[3];
+		} else if (parts.length == 2) {
+			m_svc_name = parts[0];
+			m_svc_color = parts[1];
+			m_svc_duration = "";
+			m_svc_acked = false;
 		}
 	}
 	

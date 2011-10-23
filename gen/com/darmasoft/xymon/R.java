@@ -24,6 +24,7 @@ public final class R {
         public static final int group_service=0x7f080008;
         public static final int host_line_container=0x7f080005;
         public static final int hostname_line=0x7f080000;
+        public static final int itemClearHistory=0x7f08000b;
         public static final int itemPrefs=0x7f080006;
         public static final int itemRefresh=0x7f080007;
         public static final int itemStartService=0x7f080009;
@@ -42,6 +43,11 @@ public final class R {
         public static final int app_name=0x7f050000;
         public static final int current_status_prompt=0x7f050001;
         public static final int last_updated_prompt=0x7f050002;
+        public static final int menu_title_clear_history=0x7f050012;
+        public static final int perms_receive_data_notification_desc=0x7f050016;
+        public static final int perms_receive_data_notification_title=0x7f050014;
+        public static final int perms_send_data_notification_desc=0x7f050015;
+        public static final int perms_send_data_notification_title=0x7f050013;
         public static final int prefs_dialog_title_update_interval=0x7f050011;
         public static final int prefs_summary_hostname=0x7f050004;
         public static final int prefs_summary_password=0x7f05000b;
