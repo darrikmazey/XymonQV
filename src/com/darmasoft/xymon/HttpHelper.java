@@ -22,9 +22,8 @@ public class HttpHelper {
 			InputStreamReader isr = new InputStreamReader(entity.getContent());
 			StringBuffer buffer = new StringBuffer();
 			Reader in = new BufferedReader(isr);
-			int ch;
 			char[] tmp_buffer = new char[1025];
-			while ((ch = in.read(tmp_buffer, 0, 1024)) > -1) {
+			while ((in.read(tmp_buffer, 0, 1024)) > -1) {
 				buffer.append(tmp_buffer);
 				tmp_buffer = new char[1025];
 			}

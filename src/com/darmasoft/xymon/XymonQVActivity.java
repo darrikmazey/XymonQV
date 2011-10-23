@@ -35,6 +35,7 @@ public class XymonQVActivity extends Activity {
 		Log.d(TAG, "onResume()");
 		super.onResume();
 		registerReceiver(m_receiver, m_filter);
+		load_status();
 	}
 
 	SharedPreferences prefs;
@@ -49,7 +50,7 @@ public class XymonQVActivity extends Activity {
     	
     	prefs = PreferenceManager.getDefaultSharedPreferences(this);
     	
-    	m_receiver = new XymonQVReceiver();
+    	m_receiver = new XymonQVReceiver(this);
     	m_filter = new IntentFilter("com.darmasoft.xymon.NEW_DATA");
     	
     	load_status();
@@ -120,9 +121,17 @@ public class XymonQVActivity extends Activity {
     }
 
     class XymonQVReceiver extends BroadcastReceiver {
+    	
+    	private XymonQVActivity m_act;
+    	
+    	public XymonQVReceiver(XymonQVActivity activity) {
+    		super();
+    		m_act = activity;
+    	}
     	@Override
     	public void onReceive(Context context, Intent intent) {
     		Log.d("XymonQVReceiver", "onReceive()");
+    		m_act.load_status();
     	}
     }
 }
