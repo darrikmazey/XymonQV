@@ -89,7 +89,7 @@ public class XymonQVService extends Service {
 			       	dbHelper.insert_run(last_updated, last_color);
 			       	
 			       	Intent intent = new Intent("com.darmasoft.xymon.NEW_DATA");
-			       	svc.sendBroadcast(intent);
+			       	svc.sendBroadcast(intent, "com.darmasoft.xymon.RECEIVE_DATA_NOTIFICATION");
 			       	
 					Log.d(TAG, "Updater ran");
 					int delay = ((XymonQVApplication) getApplication()).update_interval();

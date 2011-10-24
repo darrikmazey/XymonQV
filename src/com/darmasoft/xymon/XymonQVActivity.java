@@ -34,7 +34,7 @@ public class XymonQVActivity extends Activity {
 	protected void onResume() {
 		Log.d(TAG, "onResume()");
 		super.onResume();
-		registerReceiver(m_receiver, m_filter);
+		registerReceiver(m_receiver, m_filter, "com.darmasoft.xymon.SEND_DATA_NOTIFICATION", null);
 		load_status();
 	}
 
