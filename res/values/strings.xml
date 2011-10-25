@@ -19,14 +19,16 @@
     <string name="prefs_title_update_interval">Update Interval</string>
     <string-array name="interval_strings">
         <item >Manual</item>
-        <item >DEBUG</item>
+        <item >10 Seconds</item>
+        <item >30 Seconds</item>
         <item >2 Minutes</item>
         <item >5 Minutes</item>
         <item >10 Minutes</item>
     </string-array>
     <string-array name="interval_values">
         <item >0</item>
-        <item >45000</item>
+        <item >10000</item>
+        <item >30000</item>
         <item >120000</item>
         <item >600000</item>
         <item >1200000</item>

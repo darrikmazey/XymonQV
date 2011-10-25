@@ -2,34 +2,32 @@ package com.darmasoft.xymon;
 
 import java.util.Date;
 
-import android.app.Service;
+import android.app.IntentService;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.IBinder;
 import android.util.Log;
 
-public class XymonQVService extends Service {
+public class XymonQVService extends IntentService {
 
 	static final String TAG = "XymonQVService";
-	private boolean running = false;
-	private Updater updater;
 	private XymonServer server;
 	
+	public static final String RECEIVE_DATA_NOTIFICATION = "com.darmasoft.xymon.RECEIVE_DATA_NOTIFICATION";
+	
 	private DBHelper dbHelper;
+
+	public XymonQVService() {
+		super(TAG);
+		
+		Log.d(TAG, "constructor");	
+	}
 	
 	@Override
-	public IBinder onBind(Intent intent) {
-		return null;
-	}
-
-	@Override
-	public void onCreate() {
-		Log.d(TAG, "onCreate()");
-		super.onCreate();
-		this.updater = new Updater();
+	protected void onHandleIntent(Intent incoming_intent) {
+		Log.d(TAG, "Updater running");
 		
 		this.dbHelper = new DBHelper(this);
-				
+		
 		SharedPreferences prefs = ((XymonQVApplication) getApplication()).prefs;
 		
 		String hostname = prefs.getString("hostname", "www.xymon.org");
@@ -39,66 +37,24 @@ public class XymonQVService extends Service {
 		
 		server = new XymonServer(hostname, ssl, username, password, this);
 
-	}
+		server.refresh();
+		Date last_updated = server.last_updated();
+		String last_color = server.color();
 
-	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
-		Log.d(TAG, "Starting");
-		super.onStartCommand(intent, flags, startId);
-		if (!running) {
-			running = true;
-			this.updater.start();
-		} else {
-			Log.d(TAG, "Already running");
-		}
-		return START_STICKY;
-	}
-	
-	@Override
-	public void onDestroy() {
-		Log.d(TAG, "Stopping");
-		this.updater.interrupt();
-		super.onDestroy();
-	}
-	
-	private class Updater extends Thread {
-		public Updater() {
-			super("Updater");
-		}
-		
-		@Override
-		public void run() {
-			XymonQVService svc = XymonQVService.this;
-			
-			while (svc.running) {
-				Log.d(TAG, "Updater running");
-				try {
-			       	server.refresh();
-		       		Date last_updated = server.last_updated();
-		       		String last_color = server.color();
-			       	
-			       	for (XymonHost host : server.hosts()) {
-			       		
-			       		dbHelper.insert(host, last_updated);
-			       		
-			       		for (XymonService s : host.services()) {
-			       			dbHelper.insert(s, last_updated);
-			       		}
-			       	}
-			       	
-			       	dbHelper.insert_run(last_updated, last_color);
-			       	
-			       	Intent intent = new Intent("com.darmasoft.xymon.NEW_DATA");
-			       	svc.sendBroadcast(intent, "com.darmasoft.xymon.RECEIVE_DATA_NOTIFICATION");
-			       	
-					Log.d(TAG, "Updater ran");
-					int delay = ((XymonQVApplication) getApplication()).update_interval();
-					Thread.sleep(delay);
-				} catch (InterruptedException e) {
-					svc.running = false;
-				}
+		for (XymonHost host : server.hosts()) {
+
+			dbHelper.insert(host, last_updated);
+
+			for (XymonService s : host.services()) {
+				dbHelper.insert(s, last_updated);
 			}
 		}
-		
+
+		dbHelper.insert_run(last_updated, last_color);
+
+		Intent intent = new Intent("com.darmasoft.xymon.NEW_DATA");
+		sendBroadcast(intent, RECEIVE_DATA_NOTIFICATION);
+
+		Log.d(TAG, "Updater ran");
 	}
 }

@@ -20,7 +20,7 @@ import android.widget.TextView;
 
 public class XymonQVActivity extends Activity {
 	
-	private XymonQVReceiver m_receiver;
+	private XymonQVUpdateReceiver m_receiver;
 	private IntentFilter m_filter;
 	
 	@Override
@@ -50,7 +50,7 @@ public class XymonQVActivity extends Activity {
     	
     	prefs = PreferenceManager.getDefaultSharedPreferences(this);
     	
-    	m_receiver = new XymonQVReceiver(this);
+    	m_receiver = new XymonQVUpdateReceiver(this);
     	m_filter = new IntentFilter("com.darmasoft.xymon.NEW_DATA");
     	
     	load_status();
@@ -88,6 +88,7 @@ public class XymonQVActivity extends Activity {
        	}
 
     }
+    
     public boolean onCreateOptionsMenu(Menu menu) {
     	MenuInflater inflater = getMenuInflater();
     	inflater.inflate(R.menu.menu, menu);
@@ -97,18 +98,15 @@ public class XymonQVActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
     	switch(item.getItemId()) {
     	case R.id.itemPrefs:
+    		Log.d(TAG, "options item : preferences");
     		startActivity(new Intent(this, PrefsActivity.class));
     		break;
     	case R.id.itemRefresh:
-    		load_status();
-    		break;
-    	case R.id.itemStartService:
+    		Log.d(TAG, "options item : start service");
     		startService(new Intent(this, XymonQVService.class));
     		break;
-    	case R.id.itemStopService:
-    		stopService(new Intent(this, XymonQVService.class));
-    		break;
     	case R.id.itemClearHistory:
+    		Log.d(TAG, "options item : clear history");
     		XymonServer server = ((XymonQVApplication) getApplication()).xymon_server();
     		server.clear_history();
     		load_status();

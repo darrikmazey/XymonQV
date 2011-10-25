@@ -2,10 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item android:id="@+id/itemPrefs" android:title="@string/title_prefs" android:icon="@android:drawable/ic_menu_preferences"></item>
     <item android:id="@+id/itemRefresh" android:title="@string/title_refresh" android:icon="@drawable/ic_menu_refresh"></item>
-    <group android:id="@+id/group_service">
-        <item android:id="@+id/itemStartService" android:title="@string/prefs_title_start_service"></item>
-        <item android:id="@+id/itemStopService" android:title="@string/prefs_title_stop_service"></item>
-    </group>
     <item android:id="@+id/itemClearHistory" android:title="@string/menu_title_clear_history"></item>
 
     
