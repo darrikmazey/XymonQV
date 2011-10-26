@@ -71,8 +71,9 @@ public class XymonQVApplication extends Application implements
 			return;
 		}
 		PendingIntent pe = pendingIntent();
+		
 		AlarmManager am = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-		am.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, System.currentTimeMillis(), interval, pe);
+		am.setInexactRepeating(AlarmManager.RTC, System.currentTimeMillis(), interval, pe);
 	}
 	
 	public void cancelIntent() {

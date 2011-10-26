@@ -38,10 +38,7 @@
         <activity android:name="PrefsActivity"></activity>
         
         <service android:name=".XymonQVService" />
-
-        <receiver  android:process=":remote" android:name=".XymonQVAlarmReceiver">
-        </receiver>
-        
+       
         <receiver android:name=".XymonQVBootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
