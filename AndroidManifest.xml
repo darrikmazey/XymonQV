@@ -19,7 +19,6 @@
         android:protectionLevel="normal" />
     
 	<uses-permission android:name="android.permission.INTERNET" />
-	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 	<uses-permission android:name="com.darmasoft.xymon.SEND_DATA_NOTIFICATION" />
 	<uses-permission android:name="com.darmasoft.xymon.RECEIVE_DATA_NOTIFICATION" />
 		
@@ -38,12 +37,6 @@
         <activity android:name="PrefsActivity"></activity>
         
         <service android:name=".XymonQVService" />
-       
-        <receiver android:name=".XymonQVBootReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
-        
+               
     </application>
 </manifest>

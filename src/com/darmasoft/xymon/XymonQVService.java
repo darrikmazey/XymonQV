@@ -24,7 +24,8 @@ public class XymonQVService extends IntentService {
 	
 	@Override
 	protected void onHandleIntent(Intent incoming_intent) {
-		Log.d(TAG, "Updater running");
+		Date runtime = new Date();
+		Log.d(TAG, String.format("Updater running: %tF %tT", runtime, runtime));
 		
 		this.dbHelper = new DBHelper(this);
 		

@@ -28,6 +28,8 @@ public class XymonQVActivity extends Activity {
 		Log.d(TAG, "onPause()");
 		super.onPause();
 		unregisterReceiver(m_receiver);
+		XymonQVApplication app = ((XymonQVApplication) getApplication());
+		app.cancelIntent();
 	}
 
 	@Override
@@ -35,6 +37,8 @@ public class XymonQVActivity extends Activity {
 		Log.d(TAG, "onResume()");
 		super.onResume();
 		registerReceiver(m_receiver, m_filter, "com.darmasoft.xymon.SEND_DATA_NOTIFICATION", null);
+		XymonQVApplication app = ((XymonQVApplication) getApplication());
+		app.setIntentForCurrentInterval();
 		load_status();
 	}
 
@@ -68,7 +72,7 @@ public class XymonQVActivity extends Activity {
        	Date d = server.last_updated();
        	String date = "NEVER";
        	if (d != null) {
-           	date = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss").format(d);
+           	date = String.format("%tF %tT", d, d);
        	}
        	((TextView) findViewById(R.id.hostname_line)).setText(server.host());
        	((TextView) findViewById(R.id.status_line)).setText(c.toUpperCase());

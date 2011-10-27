@@ -201,7 +201,7 @@ public class XymonServer {
 	}
 	
 	public boolean refresh() {
-		Log.i(TAG, "refresh()");
+		Log.d(TAG, "refresh()");
 		fetch_non_green_view();
 		return(true);
 	}

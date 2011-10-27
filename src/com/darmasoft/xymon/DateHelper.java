@@ -6,8 +6,8 @@ import java.util.Date;
 
 public class DateHelper {
 
-	private static final String SQL_FORMAT = "yyyy-MM-dd'T'hh:mm:ss'Z'";
-	private static final String DISPLAY_FORMAT = "dd/MM/YYYY hh:mm:ss";
+	private static final String SQL_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+	private static final String DISPLAY_FORMAT = "dd/MM/YYYY HH:mm:ss";
 	
 	public static String dateToSqlString(Date d) {
 		SimpleDateFormat formatter;
