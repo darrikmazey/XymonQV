@@ -97,7 +97,7 @@ public class XymonServer {
 		Log.d(TAG, "load_last_data()");
 		DBHelper dbHelper = new DBHelper(m_context);
 		
-		m_hosts = dbHelper.load_last_hosts();
+		m_hosts = dbHelper.load_last_hosts(this);
 		m_color = dbHelper.load_last_color();
 		m_last_updated = dbHelper.load_last_updated();
 		
@@ -126,6 +126,23 @@ public class XymonServer {
 		}
 		return(m_version);
 	}
+	
+	public String service_url(XymonService s) {
+		if (version().equals("4.3.0")) {
+			return(service_url_4_3_0(s));
+		} else if (version().equals("4.2.3")) {
+			return(service_url_4_3_0(s));
+		} else {
+			return(service_url_4_3_0(s));
+		}
+	}
+	
+	public String service_url_4_3_0(XymonService s) {
+		String hostname = s.host().hostname();
+		String svcname = s.name();
+		return(String.format("%sxymon-cgi/bb-hostsvc.sh?HOST=%s&SERVICE=%s", root_url(), hostname, svcname));
+	}
+	
 	
 	public String fetch_version() {
 		String body = fetch(root_url());

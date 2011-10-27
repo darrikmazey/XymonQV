@@ -6,6 +6,7 @@ public class XymonHost {
 
 	private String m_hostname;
 	private ArrayList<XymonService> m_services = new ArrayList<XymonService>();
+	private XymonServer server = null;
 	
 	public XymonHost(String hostname) {
 		super();
@@ -29,4 +30,11 @@ public class XymonHost {
 		return(m_services);
 	}
 	
+	public void setServer(XymonServer s) {
+		server = s;
+	}
+	
+	public XymonServer server() {
+		return(server);
+	}
 }

@@ -1,6 +1,5 @@
 package com.darmasoft.xymon;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import android.app.Activity;
@@ -59,6 +58,7 @@ public class XymonQVActivity extends Activity {
     	
     	load_status();
     }
+    
 
     public void load_status() {
        	XymonServer server = ((XymonQVApplication) getApplication()).xymon_server();

@@ -137,7 +137,7 @@ public class DBHelper extends SQLiteOpenHelper {
 		
 		return(true);
 	}
-	public ArrayList<XymonHost> load_last_hosts() {
+	public ArrayList<XymonHost> load_last_hosts(XymonServer server) {
 		Log.d(TAG, "load_last_hosts()");
 		SQLiteDatabase db = this.getWritableDatabase();
 		String sql = "select distinct(hosts.hostname) from hosts, statuses where statuses.created_at in (select max(created_at) from runs) " +
@@ -149,6 +149,7 @@ public class DBHelper extends SQLiteOpenHelper {
 		while (cursor.moveToNext()) {
 			XymonHost host = new XymonHost(cursor.getString(0));
 			load_services_for_host(host);
+			host.setServer(server);
 			hosts.add(host);
 		}
 		cursor.close();
