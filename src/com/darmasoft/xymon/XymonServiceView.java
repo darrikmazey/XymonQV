@@ -2,6 +2,7 @@ package com.darmasoft.xymon;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -13,6 +14,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.View.OnClickListener;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -45,22 +47,33 @@ public class XymonServiceView extends LinearLayout implements OnClickListener {
 		TextView tv_hostname = new TextView(context);
 		tv_hostname.setText(service.host().hostname());
 		tv_hostname.setGravity(Gravity.LEFT);
+		tv_hostname.setTextSize(12);
 		tv_hostname.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT, 1));
 		tv_hostname.setPadding(5,5,5,5);
 		this.addView(tv_hostname);
 		
 		TextView tv_service_name = new TextView(context);
 		tv_service_name.setText(service.name());
+		tv_service_name.setTextSize(12);
 		tv_service_name.setGravity(Gravity.RIGHT);
 		tv_service_name.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT, 1));
-		tv_service_name.setPadding(5, 5, 25, 5);
+		tv_service_name.setPadding(5, 5, 5, 5);
 		this.addView(tv_service_name);
+		
+		ImageView iv_checkmark = new ImageView(context);
+		if (svc.acked()) {
+			iv_checkmark.setImageDrawable(getResources().getDrawable(R.drawable.ic_checkmark));
+			iv_checkmark.setColorFilter(color);
+		}
+		iv_checkmark.setLayoutParams(new LayoutParams(50,50));
+		iv_checkmark.setPadding(5,5,5,5);
+		this.addView(iv_checkmark);
 		
 		TextView tv_color = new TextView(context);
 		tv_color.setGravity(Gravity.RIGHT);
 		tv_color.setLayoutParams(new LayoutParams(50, LayoutParams.MATCH_PARENT));
 		tv_color.setBackgroundColor(color);
-		tv_color.setPadding(25,5,5,5);
+		tv_color.setPadding(5,5,5,5);
 		this.addView(tv_color);
 
     	gestureDetector = new GestureDetector(new MyGestureDetector());
@@ -110,7 +123,10 @@ public class XymonServiceView extends LinearLayout implements OnClickListener {
 		
 		public boolean onFlingRight() {
 			Log.d(TAG, "FLING RIGHT");
-			Log.d(TAG, String.format("Server version: %s", service.host().server().version()));
+			XymonHost host = service.host();
+			XymonServer server = host.server();
+			String version = server.version();
+			Log.d(TAG, String.format("Server version: %s", version));
 			String url = service.host().server().service_url(service);
 			Intent i = new Intent(Intent.ACTION_VIEW);
 			i.setData(Uri.parse(url));

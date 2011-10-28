@@ -68,9 +68,9 @@ public class XymonQVActivity extends Activity {
 
     private void update_view() {
       	XymonServer server = ((XymonQVApplication) getApplication()).xymon_server();
-        	String c = server.color();
-       	Date d = server.last_updated();
-       	String date = "NEVER";
+      	String c = server.color();
+      	Date d = server.last_updated();
+      	String date = "NEVER";
        	if (d != null) {
            	date = String.format("%tF %tT", d, d);
        	}

@@ -132,9 +132,19 @@ public class XymonServer {
 			return(service_url_4_3_0(s));
 		} else if (version().equals("4.2.3")) {
 			return(service_url_4_3_0(s));
+		} else if (version().equals("4.3.4")) {
+			return(service_url_4_3_4(s));
+		} else if (version().equals("4.3.5")) {
+			return(service_url_4_3_4(s));
 		} else {
 			return(service_url_4_3_0(s));
 		}
+	}
+	
+	public String service_url_4_3_4(XymonService s) {
+		String hostname = s.host().hostname();
+		String svcname = s.name();
+		return(String.format("%sxymon-cgi/svcstatus.sh?HOST=%s&SERVICE=%s", root_url(), hostname, svcname));
 	}
 	
 	public String service_url_4_3_0(XymonService s) {
@@ -226,6 +236,9 @@ public class XymonServer {
 	public String color() {
 		if (m_color == null) {
 			refresh();
+			if (m_color == null) {
+				return("unknown");
+			}
 		}
 		return(m_color);
 	}
@@ -246,7 +259,11 @@ public class XymonServer {
 		 * if so, then the parse methods should reflect that (ie, 4_3 and 4_2).
 		 */
 		//if (version.substring(0,3).equals("4.3")) { //Supports any 4.3 minor version
-		if (version.equals("4.3.0")) {
+		if (version.equals("4.3.5")) {
+			parse_non_green_body_4_3_4();
+		} else if (version.equals("4.3.4")) {
+			parse_non_green_body_4_3_4();
+		} else if (version.equals("4.3.0")) {
 			parse_non_green_body_4_3_0();
 		} else if (version.equals("4.2.3")) {
 			parse_non_green_body_4_2_3();
@@ -298,6 +315,7 @@ public class XymonServer {
 						host.add_service(s);
 					}
 				}
+				host.setServer(this);
 				m_hosts.add(host);
 			}
 		} catch (XPatherException e) {
@@ -346,7 +364,56 @@ public class XymonServer {
 						host.add_service(s);
 					}
 				}
-				
+				host.setServer(this);
+				m_hosts.add(host);
+			}
+		} catch (XPatherException e) {
+			Log.d(TAG, e.getMessage());
+			e.printStackTrace();
+		}
+		return(true);
+	}
+	
+	public boolean parse_non_green_body_4_3_4() {
+
+		try {
+			CleanerProperties props = new CleanerProperties();
+			props.setAllowHtmlInsideAttributes(true);
+			props.setAllowMultiWordAttributes(true);
+			props.setRecognizeUnicodeChars(true);
+			props.setOmitComments(true);
+			
+			TagNode doc = new HtmlCleaner(props).clean(m_last_non_green_body);
+
+			TagNode doc_body = ((TagNode) doc.evaluateXPath("body")[0]);
+			
+			m_color = doc_body.getAttributeByName("class");
+			
+			Object[] non_green_lines = doc.evaluateXPath("//tr[@class='line']");
+			Log.d(TAG, "found " + Integer.toString(non_green_lines.length) + " non green lines");
+			for (Object o : non_green_lines) {
+				TagNode e = (TagNode) o;
+				String hostname = ((TagNode) e.evaluateXPath("//td[@nowrap]/a[@name]")[0]).getAttributeByName("name");
+				Log.d(TAG, "found hostname: " + hostname);
+				XymonHost host = new XymonHost(hostname);
+				Object[] non_green_services = e.evaluateXPath("//td[@align]/a/img[@src]");
+				Log.d(TAG, "found " + Integer.toString(non_green_services.length) + " non-green services");
+				for (Object svc_o : non_green_services) {
+					TagNode svc_e = (TagNode) svc_o;
+					
+					String svc_src = svc_e.getAttributeByName("src");
+					Pattern p = Pattern.compile("(?i)(red|yellow|blue|purple)");
+					Matcher m = p.matcher(svc_src);
+					
+					if (m.find()) {
+						String svcinfo = svc_e.getAttributeByName("alt");
+						Log.d(TAG, "svcinfo: [" + svcinfo + "]");
+						String[] parts = svcinfo.split(":");
+						XymonService s = new XymonService(parts);
+						host.add_service(s);
+					}
+				}
+				host.setServer(this);
 				m_hosts.add(host);
 			}
 		} catch (XPatherException e) {

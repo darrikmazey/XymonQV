@@ -1,9 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
-    <EditTextPreference android:summary="@string/prefs_summary_hostname" android:title="@string/prefs_title_hostname" android:key="hostname" android:defaultValue="www.xymon.org"/>
-    <PreferenceCategory android:title="@string/prefs_title_category_ssl" android:key="ssl_category">
-        <CheckBoxPreference android:summary="@string/prefs_summary_ssl" android:key="use_ssl" android:title="@string/prefs_title_ssl" android:disableDependentsState="false"/>
-        <EditTextPreference android:key="username" android:summary="@string/prefs_summary_username" android:title="@string/prefs_title_username" android:dependency="use_ssl"/>
-        <EditTextPreference android:key="password" android:summary="@string/prefs_summary_password" android:title="@string/prefs_title_password" android:password="true" android:dependency="use_ssl"/></PreferenceCategory>
-    <ListPreference android:key="update_interval" android:title="@string/prefs_title_update_interval" android:entries="@array/interval_strings" android:entryValues="@array/interval_values" android:dialogTitle="@string/prefs_dialog_title_update_interval"/>
+    <EditTextPreference android:summary="@string/prefs_summary_hostname" android:title="@string/prefs_title_hostname" android:key="hostname" android:defaultValue="www.xymon.org"/><CheckBoxPreference
+        android:disableDependentsState="false"
+        android:key="use_ssl"
+        android:summary="@string/prefs_summary_ssl"
+        android:title="@string/prefs_title_ssl" />
+
+    <EditTextPreference
+        android:key="username"
+        android:summary="@string/prefs_summary_username"
+        android:title="@string/prefs_title_username" />
+
+    <EditTextPreference
+        android:key="password"
+        android:password="true"
+        android:summary="@string/prefs_summary_password"
+        android:title="@string/prefs_title_password" />
+    
+    <ListPreference
+        android:dialogTitle="@string/prefs_dialog_title_update_interval"
+        android:entries="@array/interval_strings"
+        android:entryValues="@array/interval_values"
+        android:key="update_interval"
+        android:title="@string/prefs_title_update_interval" />
+
 </PreferenceScreen>
