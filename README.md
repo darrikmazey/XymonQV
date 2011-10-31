@@ -23,3 +23,4 @@ See LICENSE for details.
 Download Latest
 -----
 ![XymonQV-0.1.3](https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=https://github.com/downloads/darrikmazey/XymonQV/XymonQV.apk)
+[XymonQV-0.1.3]: https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=https://github.com/downloads/darrikmazey/XymonQV/XymonQV.apk
