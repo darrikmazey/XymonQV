@@ -4,19 +4,19 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-
 import android.util.Log;
 
 public class HttpHelper {
 
 	public static final String TAG = "HttpHelper";
 	
-	public static String readBody(HttpResponse res) throws IllegalStateException, IOException {
+	public static String readBody(HttpResponse res) throws XymonQVException {
 		Log.d(TAG, res.getStatusLine().toString());
-		if (res.getStatusLine().getStatusCode() == 200) {
+		int sc = res.getStatusLine().getStatusCode();
+		if (sc == 200) {
+			try {
 			Log.d(TAG, "200 code");
 			HttpEntity entity = res.getEntity();
 			InputStreamReader isr = new InputStreamReader(entity.getContent());
@@ -28,7 +28,17 @@ public class HttpHelper {
 				tmp_buffer = new char[1025];
 			}
 			return(buffer.toString());
+			} catch(IOException e) {
+				e.printStackTrace();
+			}
+		} else if (sc == 401) {
+			InvalidUsernameOrPasswordException e = new InvalidUsernameOrPasswordException();
+			e.printStackTrace();
+			throw e;
+			// status not 200
 		}
 		return(null);
 	}
 }
+
+

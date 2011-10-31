@@ -2,7 +2,6 @@ package com.darmasoft.xymon;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -41,7 +40,6 @@ public class XymonServiceView extends LinearLayout implements OnClickListener {
 		this.setPadding(5,5,5,5);
 		Drawable d = getResources().getDrawable(R.drawable.text_view_border);
 		d.setColorFilter(color, PorterDuff.Mode.DARKEN);
-//		d.setColorFilter(Color.argb(128,0,0,0), PorterDuff.Mode.DARKEN);
 		this.setBackgroundDrawable(d);
 		
 		TextView tv_hostname = new TextView(context);

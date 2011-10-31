@@ -118,6 +118,8 @@ public class DBHelper extends SQLiteOpenHelper {
 		return(true);
 	}
 	public synchronized boolean insert_run(Date last_updated, String color) {
+		Log.d(TAG, String.format("insert_run(%tF %tT, %s", last_updated, last_updated, color));
+		
 		ContentValues values = new ContentValues();
 		values.clear();
 		

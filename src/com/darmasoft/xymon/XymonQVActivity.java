@@ -61,6 +61,7 @@ public class XymonQVActivity extends Activity {
     
 
     public void load_status() {
+    	Log.d(TAG, "load_status()");
        	XymonServer server = ((XymonQVApplication) getApplication()).xymon_server();
        	server.load_last_data();
        	update_view();

@@ -5,12 +5,15 @@ import java.util.Date;
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Handler;
 import android.util.Log;
+import android.widget.Toast;
 
 public class XymonQVService extends IntentService {
 
 	static final String TAG = "XymonQVService";
 	private XymonServer server;
+	private Handler handler;
 	
 	public static final String RECEIVE_DATA_NOTIFICATION = "com.darmasoft.xymon.RECEIVE_DATA_NOTIFICATION";
 	
@@ -19,7 +22,33 @@ public class XymonQVService extends IntentService {
 	public XymonQVService() {
 		super(TAG);
 		
-		Log.d(TAG, "constructor");	
+		Log.d(TAG, "constructor");
+		try {
+			Class.forName("android.os.AsyncTask");
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public void onCreate() {
+		super.onCreate();
+	
+		handler = new Handler();
+	}
+
+	private class ToastMessage implements Runnable {
+		String m_text;
+		
+		public ToastMessage(String text) {
+			Log.d(TAG, String.format("ToastMessage('%s')", text));
+			m_text = text;
+		}
+		
+		public void run() {
+			Toast.makeText(XymonQVService.this, m_text, Toast.LENGTH_LONG).show();
+		}
 	}
 	
 	@Override
@@ -38,7 +67,14 @@ public class XymonQVService extends IntentService {
 		
 		server = new XymonServer(hostname, ssl, username, password, this);
 
-		server.refresh();
+		try {
+			server.refresh();
+		} catch (XymonQVException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			handler.post(new ToastMessage(e.getMessage()));
+		}			
+		
 		Date last_updated = server.last_updated();
 		String last_color = server.color();
 
@@ -57,5 +93,6 @@ public class XymonQVService extends IntentService {
 		sendBroadcast(intent, RECEIVE_DATA_NOTIFICATION);
 
 		Log.d(TAG, "Updater ran");
+
 	}
 }

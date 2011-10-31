@@ -1,6 +1,7 @@
 package com.darmasoft.xymon;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.regex.Matcher;
@@ -15,6 +16,8 @@ import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.ConnectTimeoutException;
+import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.conn.params.ConnManagerPNames;
 import org.apache.http.conn.params.ConnPerRouteBean;
 import org.apache.http.conn.scheme.PlainSocketFactory;
@@ -41,7 +44,7 @@ public class XymonServer {
 	private String m_host;
 	private String m_username;
 	private String m_password;
-	private String m_version = null;
+	private String m_version = "unknown";
 	private String m_color = null;
 	private String m_last_non_green_body = null;
 	private Date m_last_updated = null;
@@ -121,20 +124,20 @@ public class XymonServer {
 	
 	public String version() {
 		if (m_version == null || m_version == "unknown") {
-			m_version = fetch_version();
-			Log.d(TAG, "FOUND VERSION: " + m_version);
+			return("unknown");
 		}
 		return(m_version);
 	}
 	
 	public String service_url(XymonService s) {
-		if (version().equals("4.3.0")) {
+		String ver = version();
+		if (ver.equals("4.3.0")) {
 			return(service_url_4_3_0(s));
-		} else if (version().equals("4.2.3")) {
+		} else if (ver.equals("4.2.3")) {
 			return(service_url_4_3_0(s));
-		} else if (version().equals("4.3.4")) {
+		} else if (ver.equals("4.3.4")) {
 			return(service_url_4_3_4(s));
-		} else if (version().equals("4.3.5")) {
+		} else if (ver.equals("4.3.5")) {
 			return(service_url_4_3_4(s));
 		} else {
 			return(service_url_4_3_0(s));
@@ -154,12 +157,14 @@ public class XymonServer {
 	}
 	
 	
-	public String fetch_version() {
-		String body = fetch(root_url());
+	public String fetch_version() throws XymonQVException {
+		String body = null;
+		body = fetch(root_url());
 		if (body == null) {
+			Log.d(TAG, "null body on fetch(root_url())");
 			return("unknown");
 		}
-		
+
 		CleanerProperties props = new CleanerProperties();
 		props.setAllowHtmlInsideAttributes(true);
 		props.setAllowMultiWordAttributes(true);
@@ -168,10 +173,16 @@ public class XymonServer {
 		
 		TagNode node = new HtmlCleaner(props).clean(body);
 			
+		Object links[];
 		TagNode link;
 		
 		try {
-			link = ((TagNode) node.evaluateXPath("//table//tr/td/font/b/a")[0]);
+			links = node.evaluateXPath("//table//tr/td/font/b/a");
+			if (links.length > 0) {
+				link = ((TagNode) links[0]);
+			} else {
+				link = null;
+			}
 		} catch (XPatherException e) {
 			// TODO Auto-generated catch block
 			return("unknown");
@@ -221,24 +232,30 @@ public class XymonServer {
 		return(scheme() + m_host + postfix);
 	}
 	
-	public String fetch_non_green_view() {
-		m_last_non_green_body = fetch(non_green_url_for_version(version()));
+	public String fetch_non_green_view() throws XymonQVException {
+		String ver = version();
+		String url = non_green_url_for_version(ver);
+		m_last_non_green_body = fetch(url);
 		parse_non_green_body(version());
 		return(m_last_non_green_body);
 	}
 	
-	public boolean refresh() {
+	public boolean refresh() throws XymonQVException {
 		Log.d(TAG, "refresh()");
+		try {
+		m_version = fetch_version();
 		fetch_non_green_view();
+		} catch (XymonQVException e) {
+			m_color = "black";
+			m_last_updated = new Date();
+			throw e;
+		}
 		return(true);
 	}
 
 	public String color() {
 		if (m_color == null) {
-			refresh();
-			if (m_color == null) {
-				return("unknown");
-			}
+			return("black");
 		}
 		return(m_color);
 	}
@@ -250,6 +267,7 @@ public class XymonServer {
 	public boolean parse_non_green_body(String version) {
 		Log.d(TAG, "parse_non_green_body(" + version + ")");
 		if (m_last_non_green_body == null) {
+			m_last_updated = new Date();
 			m_color = "unknown";
 			return(false);
 		}
@@ -423,25 +441,41 @@ public class XymonServer {
 		return(true);
 	}
 	
+	
 	public Date last_updated() {
 		return(m_last_updated);
 	}
 	
-	public String fetch(String url) {
+	public String fetch(String url) throws XymonQVException {
+		Log.d(TAG, "fetching: " + url);
 		HttpClient client = new DefaultHttpClient(m_conn_manager, m_http_params);
 		HttpGet get = new HttpGet(url);
+		HttpResponse res = null;
 		try {
-			HttpResponse res = client.execute(get, m_http_context);
-			return(HttpHelper.readBody(res));
+			res = client.execute(get, m_http_context);
+		} catch(ConnectTimeoutException e) {
+			e.printStackTrace();
+			ConnectionErrorException ne = new ConnectionErrorException("Connection Error: " + e.getMessage());
+			throw ne;
+		} catch (HttpHostConnectException e) {
+			e.printStackTrace();
+			ConnectionErrorException ne = new ConnectionErrorException("Connection Error: " + e.getMessage());
+			throw ne;
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+			ConnectionErrorException ne = new ConnectionErrorException("Unknown Host: " + e.getMessage());
+			throw ne;
 		} catch (ClientProtocolException e) {
 			// TODO Auto-generated catch block
-			Log.e(TAG, e.toString() + " : " + e.getMessage());
 			e.printStackTrace();
+			throw new XymonQVException(e.getMessage());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			Log.e(TAG, e.toString() + " : " + e.getMessage());
 			e.printStackTrace();
+			throw new XymonQVException("Error:\n" + e.getClass() + "\n" + e.getMessage());
 		}
-		return(null);
+		String body = null;
+		body = HttpHelper.readBody(res);
+		return(body);
 	}
 }
