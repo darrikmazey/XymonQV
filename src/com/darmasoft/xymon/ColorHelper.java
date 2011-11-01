@@ -20,6 +20,8 @@ public class ColorHelper {
 			return(Color.BLUE);
 		} else if (c.equals("purple")) {
 			return(Color.argb(255, 255, 0, 255));
+		} else if (c.equals("clear")) {
+			return(Color.WHITE);
 		} else {
 			return(Color.BLACK);
 		}
