@@ -33,7 +33,17 @@
         <item >600000</item>
         <item >1200000</item>
     </string-array>
-    <string name="prefs_dialog_title_update_interval">How often should xymon be checked?</string>
+    <string-array name="parser_strings">
+        <item >None</item>
+        <item >4.2.3</item>
+        <item >4.3.4</item>
+    </string-array>
+    <string-array name="parser_values">
+        <item ></item>
+        <item >4.2.3</item>
+        <item >4.3.4</item>
+    </string-array>
+        <string name="prefs_dialog_title_update_interval">How often should xymon be checked?</string>
     <string name="menu_title_clear_history">Clear History</string>
     <string name="perms_send_data_notification_title">Send Xymon Data</string>
     <string name="perms_receive_data_notification_title">Receive Xymon Data</string>
