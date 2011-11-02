@@ -7,10 +7,7 @@ clean:
 release: sign_release
 
 sign_release: ant_release
-	mkdir -p bin/release
-	cp bin/XymonQV-release-unsigned.apk bin/release/XymonQV.unsigned.apk
-	jarsigner -keystore ../keys/release.keystore bin/release/XymonQV.unsigned.apk darmasoft.release
-	/home/darrik/android_sdk/tools/zipalign -v 4 bin/release/XymonQV.unsigned.apk bin/release/XymonQV.apk
+	/bin/cp bin/XymonQV-release.apk bin/XymonQV-release-`git curtag | sed -e "s/v//"`.apk
 
 ant_release: FORCE
 	ant release
