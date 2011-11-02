@@ -45,7 +45,7 @@ public class XymonQVApplication extends Application implements
 		if (m_server == null) {
 			
 			String hostname = prefs.getString("hostname", "www.xymon.org");
-			boolean ssl = prefs.getBoolean("use_ssl", true);
+			boolean ssl = prefs.getBoolean("use_ssl", false);
 			String username = prefs.getString("username", "");
 			String password = prefs.getString("password", "");
 			

@@ -51,6 +51,7 @@ public class XymonQVService extends IntentService {
 		}
 	}
 	
+
 	@Override
 	protected void onHandleIntent(Intent incoming_intent) {
 		Date runtime = new Date();
@@ -61,7 +62,7 @@ public class XymonQVService extends IntentService {
 		SharedPreferences prefs = ((XymonQVApplication) getApplication()).prefs;
 		
 		String hostname = prefs.getString("hostname", "www.xymon.org");
-		boolean ssl = prefs.getBoolean("use_ssl", true);
+		boolean ssl = prefs.getBoolean("use_ssl", false);
 		String username = prefs.getString("username", "");
 		String password = prefs.getString("password", "");
 		
