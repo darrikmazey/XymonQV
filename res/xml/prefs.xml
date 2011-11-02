@@ -4,7 +4,7 @@
         android:disableDependentsState="false"
         android:key="use_ssl"
         android:summary="@string/prefs_summary_ssl"
-        android:title="@string/prefs_title_ssl" />
+        android:title="@string/prefs_title_ssl" android:defaultValue="false"/>
 
     <EditTextPreference
         android:key="username"
@@ -22,6 +22,6 @@
         android:entries="@array/interval_strings"
         android:entryValues="@array/interval_values"
         android:key="update_interval"
-        android:title="@string/prefs_title_update_interval" />
+        android:title="@string/prefs_title_update_interval" android:defaultValue="0"/>
 
 </PreferenceScreen>
