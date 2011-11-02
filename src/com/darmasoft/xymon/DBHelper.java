@@ -17,7 +17,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
 	static final String TAG = "DBHelper";
 	static final String DB_NAME = "xymonqv.db";
-	static final int DB_VERSION = 2;
+	static final int DB_VERSION = 3;
 	static final String HOST_TABLE = "hosts";
 	static final String STATUS_TABLE = "statuses";
 	static final String RUN_TABLE = "runs";
