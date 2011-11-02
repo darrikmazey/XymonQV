@@ -29,6 +29,7 @@ public class DBHelper extends SQLiteOpenHelper {
 	static final String C_SVC_NAME = "svc_name";
 	static final String C_COLOR = "color";
 	static final String C_DURATION = "duration";
+	static final String C_VERSION = "version";
 	
 	Context context;
 	
@@ -43,7 +44,7 @@ public class DBHelper extends SQLiteOpenHelper {
 		db.execSQL(sql);
 		sql = "create table " + STATUS_TABLE + " ( " + C_ID + " int primary key, " + C_HOST_ID + " text, " + C_SVC_NAME + " text, " + C_COLOR + " text, " + C_DURATION + " int, " + C_CREATED_AT + " text)"; 
 		db.execSQL(sql);
-		sql = "create table " + RUN_TABLE + " ( " + C_CREATED_AT + " text primary key, " + C_COLOR + " text)";  
+		sql = "create table " + RUN_TABLE + " ( " + C_CREATED_AT + " text primary key, " + C_COLOR + " text, " + C_VERSION + " text)";  
 		db.execSQL(sql);
 	}
 
@@ -51,6 +52,7 @@ public class DBHelper extends SQLiteOpenHelper {
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		db.execSQL("drop table if exists " + HOST_TABLE);
 		db.execSQL("drop table if exists " + STATUS_TABLE);
+		db.execSQL("drop table if exists " + RUN_TABLE);
 		onCreate(db);
 	}
 
@@ -117,8 +119,8 @@ public class DBHelper extends SQLiteOpenHelper {
 		
 		return(true);
 	}
-	public synchronized boolean insert_run(Date last_updated, String color) {
-		Log.d(TAG, String.format("insert_run(%tF %tT, %s", last_updated, last_updated, color));
+	public synchronized boolean insert_run(Date last_updated, String color, String version) {
+		Log.d(TAG, String.format("insert_run(%tF %tT, %s, %s", last_updated, last_updated, color, version));
 		
 		ContentValues values = new ContentValues();
 		values.clear();
@@ -128,6 +130,7 @@ public class DBHelper extends SQLiteOpenHelper {
 		
 		values.put(DBHelper.C_CREATED_AT, last_updated_str);
 		values.put(DBHelper.C_COLOR, color);
+		values.put(DBHelper.C_VERSION, version);
 		
 		try {
 			db.insertOrThrow(DBHelper.RUN_TABLE, null, values);
@@ -219,4 +222,19 @@ public class DBHelper extends SQLiteOpenHelper {
 		return(color);
 	}
 	
+	public String load_last_version() {
+		SQLiteDatabase db = this.getWritableDatabase();
+		String sql = "SELECT " + DBHelper.C_VERSION + " FROM " + DBHelper.RUN_TABLE + " ORDER BY CREATED_AT DESC LIMIT 1";
+		Cursor cursor = db.rawQuery(sql, null);
+		String version = "unknown";
+		
+		if (cursor.getCount() == 1) {
+			cursor.moveToFirst();
+			version = cursor.getString(0);
+		}
+		cursor.close();
+		db.close();
+		
+		return(version);
+	}
 }

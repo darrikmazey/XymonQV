@@ -101,6 +101,7 @@ public class XymonServer {
 		
 		m_hosts = dbHelper.load_last_hosts(this);
 		m_color = dbHelper.load_last_color();
+		m_version = dbHelper.load_last_version();
 		m_last_updated = dbHelper.load_last_updated();
 		
 		return(true);
@@ -157,6 +158,7 @@ public class XymonServer {
 	
 	
 	public String fetch_version() throws XymonQVException {
+		Log.d(TAG, "fetching version");
 		String body = null;
 		body = fetch(root_url());
 		if (body == null) {
@@ -164,6 +166,7 @@ public class XymonServer {
 			return("unknown");
 		}
 
+		Log.d(TAG, "MARKER1");
 		CleanerProperties props = new CleanerProperties();
 		props.setAllowHtmlInsideAttributes(true);
 		props.setAllowMultiWordAttributes(true);
@@ -186,10 +189,12 @@ public class XymonServer {
 			// TODO Auto-generated catch block
 			return("unknown");
 		}
+		Log.d(TAG, "MARKER2");
 		
 		if (link == null) {
 			return("unknown");
 		}
+		Log.d(TAG, "MARKER3");
 		String lt = link.getText().toString();
 		Pattern p = Pattern.compile("Xymon \\d.\\d.\\d.*");
 		Matcher m = p.matcher(lt);
@@ -197,11 +202,16 @@ public class XymonServer {
 			Pattern pv = Pattern.compile("\\d\\.\\d\\.\\d");
 			Matcher mv = pv.matcher(m.group());
 			if (mv.find()) {
+				Log.d(TAG, "MARKER4");
+				
 				return(mv.group());
 			} else {
+				Log.d(TAG, "MARKER5");
 				return("unknown");
 			}
 		} else {
+			Log.d(TAG, "MARKER6");
+			
 			return("unknown");
 		}
 	}
@@ -243,6 +253,7 @@ public class XymonServer {
 		Log.d(TAG, "refresh()");
 		try {
 		m_version = fetch_version();
+		Log.d(TAG, String.format("found version: %s", m_version));
 		fetch_non_green_view();
 		} catch (XymonQVException e) {
 			m_color = "black";

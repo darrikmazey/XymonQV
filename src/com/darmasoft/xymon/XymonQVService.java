@@ -77,6 +77,7 @@ public class XymonQVService extends IntentService {
 		
 		Date last_updated = server.last_updated();
 		String last_color = server.color();
+		String version = server.version();
 
 		for (XymonHost host : server.hosts()) {
 
@@ -87,7 +88,7 @@ public class XymonQVService extends IntentService {
 			}
 		}
 
-		dbHelper.insert_run(last_updated, last_color);
+		dbHelper.insert_run(last_updated, last_color, version);
 
 		Intent intent = new Intent("com.darmasoft.xymon.NEW_DATA");
 		sendBroadcast(intent, RECEIVE_DATA_NOTIFICATION);
