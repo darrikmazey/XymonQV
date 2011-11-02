@@ -496,7 +496,7 @@ public class XymonServer {
 			e.printStackTrace();
 			throw new XymonQVException("Error:\n" + e.getClass() + "\n" + e.getMessage());
 		}
-		String body = null;
+		String body = "";
 		body = HttpHelper.readBody(res);
 		return(body);
 	}

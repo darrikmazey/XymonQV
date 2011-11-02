@@ -24,6 +24,7 @@ public class XymonVersion434 extends XymonVersion {
 	public static ArrayList<String> supported_versions() {
 		ArrayList<String> al = new ArrayList<String>();
 		al.add("4.3.4");
+		al.add("4.3.5");
 		return al;
 	}
 	
@@ -44,7 +45,6 @@ public class XymonVersion434 extends XymonVersion {
 		XymonQuery q = new XymonQuery(m_server);
 		q.set_last_updated(new Date());
 		q.set_version(m_version);
-		
 
 		try {
 			CleanerProperties props = new CleanerProperties();
