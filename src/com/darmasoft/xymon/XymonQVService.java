@@ -93,6 +93,7 @@ public class XymonQVService extends IntentService {
 		sendBroadcast(intent, RECEIVE_DATA_NOTIFICATION);
 
 		Log.d(TAG, "Updater ran");
+		
 
 	}
 }

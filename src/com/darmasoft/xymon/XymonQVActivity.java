@@ -3,6 +3,7 @@ package com.darmasoft.xymon;
 import java.util.ArrayList;
 import java.util.Date;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -21,6 +22,7 @@ public class XymonQVActivity extends Activity {
 	
 	private XymonQVUpdateReceiver m_receiver;
 	private IntentFilter m_filter;
+	private ProgressDialog prog_dialog = null;
 	
 	@Override
 	protected void onPause() {
@@ -59,9 +61,12 @@ public class XymonQVActivity extends Activity {
     	load_status();
     }
     
-
     public void load_status() {
     	Log.d(TAG, "load_status()");
+    	if (prog_dialog != null) {
+    		prog_dialog.dismiss();
+    		prog_dialog = null;
+    	}
        	XymonServer server = ((XymonQVApplication) getApplication()).xymon_server();
        	server.load_last_data();
        	update_view();
@@ -108,6 +113,7 @@ public class XymonQVActivity extends Activity {
     		break;
     	case R.id.itemRefresh:
     		Log.d(TAG, "options item : start service");
+    		prog_dialog = ProgressDialog.show(this, "", "Loading data...");
     		startService(new Intent(this, XymonQVService.class));
     		break;
     	case R.id.itemClearHistory:

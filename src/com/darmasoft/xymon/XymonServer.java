@@ -59,7 +59,6 @@ public class XymonServer {
 
 	public XymonServer(String host, boolean ssl, String username, String password, Context context) {
 		super();
-		Log.d(TAG, "constructor(" + host + ", " + Boolean.toString(ssl) + ", " + username + ", " + password + ")");
 		m_host = host;
 		m_ssl = ssl;
 		m_username = username;
@@ -411,28 +410,35 @@ public class XymonServer {
 			Log.d(TAG, "found " + Integer.toString(non_green_lines.length) + " non green lines");
 			for (Object o : non_green_lines) {
 				TagNode e = (TagNode) o;
-				String hostname = ((TagNode) e.evaluateXPath("//td[@nowrap]/a[@name]")[0]).getAttributeByName("name");
-				Log.d(TAG, "found hostname: " + hostname);
-				XymonHost host = new XymonHost(hostname);
-				Object[] non_green_services = e.evaluateXPath("//td[@align]/a/img[@src]");
-				Log.d(TAG, "found " + Integer.toString(non_green_services.length) + " non-green services");
-				for (Object svc_o : non_green_services) {
-					TagNode svc_e = (TagNode) svc_o;
-					
-					String svc_src = svc_e.getAttributeByName("src");
-					Pattern p = Pattern.compile("(?i)(red|yellow|blue|purple)");
-					Matcher m = p.matcher(svc_src);
-					
-					if (m.find()) {
-						String svcinfo = svc_e.getAttributeByName("alt");
-						Log.d(TAG, "svcinfo: [" + svcinfo + "]");
-						String[] parts = svcinfo.split(":");
-						XymonService s = new XymonService(parts);
-						host.add_service(s);
+				Object[] anchors = e.evaluateXPath("//td[@nowrap]/a[@name]");
+				if (anchors.length > 0) {
+					String hostname = ((TagNode) anchors[0]).getAttributeByName("name");
+					Log.d(TAG, "found hostname: " + hostname);
+					XymonHost host = new XymonHost(hostname);
+					Object[] non_green_services = e.evaluateXPath("//td[@align]/a/img[@src]");
+					Log.d(TAG, "found " + Integer.toString(non_green_services.length) + " non-green services");
+					for (Object svc_o : non_green_services) {
+						TagNode svc_e = (TagNode) svc_o;
+
+						String svc_src = svc_e.getAttributeByName("src");
+						Pattern p = Pattern.compile("(?i)(red|yellow|blue|purple|clear)");
+						Matcher m = p.matcher(svc_src);
+
+						if (m.find()) {
+							String svcinfo = svc_e.getAttributeByName("title");
+							Log.d(TAG, "svcinfo: [" + svcinfo + "]");
+							if (svcinfo != null){ 
+								String[] parts = svcinfo.split(":");
+								XymonService s = new XymonService(parts);
+								host.add_service(s);
+							} else {
+								Log.d(TAG, "skipped: " + svc_e.toString());
+							}
+						}
 					}
+					host.setServer(this);
+					m_hosts.add(host);
 				}
-				host.setServer(this);
-				m_hosts.add(host);
 			}
 		} catch (XPatherException e) {
 			Log.d(TAG, e.getMessage());
