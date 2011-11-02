@@ -17,7 +17,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
 	static final String TAG = "DBHelper";
 	static final String DB_NAME = "xymonqv.db";
-	static final int DB_VERSION = 1;
+	static final int DB_VERSION = 2;
 	static final String HOST_TABLE = "hosts";
 	static final String STATUS_TABLE = "statuses";
 	static final String RUN_TABLE = "runs";
@@ -50,6 +50,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+		Log.d(TAG, String.format("onUpgrade(%d, %d", oldVersion, newVersion));
 		db.execSQL("drop table if exists " + HOST_TABLE);
 		db.execSQL("drop table if exists " + STATUS_TABLE);
 		db.execSQL("drop table if exists " + RUN_TABLE);
@@ -141,6 +142,17 @@ public class DBHelper extends SQLiteOpenHelper {
 		db.close();
 		
 		return(true);
+	}
+	
+	public XymonQuery load_last_query(XymonServer server) {
+		XymonQuery q = new XymonQuery(server);
+		
+		q.set_hosts(this.load_last_hosts(server));
+		q.set_color(this.load_last_color());
+		q.set_last_updated(this.load_last_updated());
+		q.set_version(this.load_last_version());
+		
+		return(q);
 	}
 	public ArrayList<XymonHost> load_last_hosts(XymonServer server) {
 		Log.d(TAG, "load_last_hosts()");

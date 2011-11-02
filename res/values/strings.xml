@@ -39,4 +39,7 @@
     <string name="perms_receive_data_notification_title">Receive Xymon Data</string>
     <string name="perms_send_data_notification_desc">Send notifications of new data from Xymon</string>
     <string name="perms_receive_data_notification_desc">Receive notifications of new data from Xymon</string>
+    <string name="prefs_title_force_version">Force Parser Version</string>
+    <string name="prefs_summary_force_version">Only do this if you know what you\'re doing!</string>
+    <string name="prefs_title_advanced_settings">Advanced Settings</string>
 </resources>

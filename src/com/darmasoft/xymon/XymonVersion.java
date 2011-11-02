@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 abstract public class XymonVersion {
 
-	 protected XymonServer m_server;
+	 protected XymonServer m_server = null;
 	 protected String m_version;
 	 
 	 public XymonVersion(String version) {
@@ -16,10 +16,16 @@ abstract public class XymonVersion {
 	 }
 	 
 	 public String host() {
+		 if (m_server == null) {
+			 return "";
+		 }
 		 return(m_server.host());
 	 }
 	 
 	 public boolean ssl() {
+		 if (m_server == null) {
+			 return(false);
+		 }
 		 return(m_server.ssl());
 	 }
 	 
@@ -28,12 +34,16 @@ abstract public class XymonVersion {
 	 }
 	 
 	 public static boolean sufficient_for_version(String version) {
-		 return(supported_versions().contains(version));
+		 return false;
 	 }
 	 
 	 abstract public String service_url(XymonService s);
-	 abstract public String root_url();
 	 abstract public String non_green_url();
+	 
+	 public String root_url() {
+		 String scheme = (ssl() ? "https://" : "http://");
+		 return(String.format("%s%s/", scheme, host()));
+	 }
 	 
 	 abstract public XymonQuery parse_non_green_body(String body);
 	 

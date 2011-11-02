@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.Toast;
 
 public class XymonQVApplication extends Application implements
 		OnSharedPreferenceChangeListener {
@@ -40,7 +41,7 @@ public class XymonQVApplication extends Application implements
 		return(Integer.valueOf(prefs.getString("update_interval", "0")));
 	}
 	
-	public XymonServer xymon_server() {
+	public XymonServer xymon_server() throws UnsupportedVersionException {
 		Log.d(TAG, "xymon_server()");
 		if (m_server == null) {
 			
@@ -49,7 +50,12 @@ public class XymonQVApplication extends Application implements
 			String username = prefs.getString("username", "");
 			String password = prefs.getString("password", "");
 			
-			m_server = new XymonServer(hostname, ssl, username, password, this);
+			try {
+				m_server = new XymonServer(hostname, ssl, username, password, this);
+			} catch (UnsupportedVersionException e) {
+				Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+				throw e;
+			}
 		}
 		return(m_server);
 	}

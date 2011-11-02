@@ -23,5 +23,7 @@
         android:entryValues="@array/interval_values"
         android:key="update_interval"
         android:title="@string/prefs_title_update_interval" android:defaultValue="0"/>
+    
+    <PreferenceCategory android:title="@string/prefs_title_advanced_settings"><EditTextPreference android:key="force_version" android:summary="@string/prefs_summary_force_version" android:title="@string/prefs_title_force_version" /></PreferenceCategory>
 
 </PreferenceScreen>

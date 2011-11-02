@@ -3,19 +3,25 @@ package com.darmasoft.xymon;
 import java.util.ArrayList;
 import java.util.Date;
 
+import android.content.Context;
+
 public class XymonQuery {
 
 	private static final String TAG = "XymonQuery";
 	
-	private String m_color;
+	private String m_color = "black";
 	private String m_version;
-	private Date m_date_ran;
+	private Date m_date_ran = null;
 	private boolean m_ran;
 
-	private ArrayList<XymonHost> m_hosts;
+	private ArrayList<XymonHost> m_hosts = new ArrayList<XymonHost>();
 	
 	public XymonQuery(XymonServer s) {
 		
+	}
+	
+	public void set_hosts(ArrayList<XymonHost> hosts) {
+		m_hosts = hosts;
 	}
 	
 	public void add_host(XymonHost h) {
@@ -26,7 +32,24 @@ public class XymonQuery {
 		return m_hosts;
 	}
 	
-	public void insert() {
+	public void insert(Context ctx) {
+		
+		DBHelper dbHelper = new DBHelper(ctx);
+
+		Date last_updated = m_date_ran;
+		String last_color = m_color;
+		String version = m_version;
+
+		for (XymonHost host : this.hosts()) {
+
+			dbHelper.insert(host, last_updated);
+
+			for (XymonService s : host.services()) {
+				dbHelper.insert(s, last_updated);
+			}
+		}
+
+		dbHelper.insert_run(last_updated, last_color, version);
 	}
 	
 	public String color() {
@@ -47,6 +70,10 @@ public class XymonQuery {
 	
 	public String version() {
 		return m_version;
+	}
+	
+	public void set_version(String version) {
+		m_version = version;
 	}
 	
 	public boolean was_ran() {

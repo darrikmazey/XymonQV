@@ -67,38 +67,54 @@ public class XymonQVActivity extends Activity {
     		prog_dialog.dismiss();
     		prog_dialog = null;
     	}
-       	XymonServer server = ((XymonQVApplication) getApplication()).xymon_server();
+    	
+    	try {
+    	XymonServer server = ((XymonQVApplication) getApplication()).xymon_server();
        	server.load_last_data();
        	update_view();
+    	} catch (UnsupportedVersionException e) {
+    		update_header_from_settings(e.version());
+    	}
     }
 
+    private void update_header_from_settings(String version) {
+    	String hostname = this.prefs.getString("hostname", "www.xymon.org");
+		((TextView) findViewById(R.id.hostname_line)).setText(String.format("%s (%s)", hostname, version));	
+		((TextView) findViewById(R.id.status_line)).setText("UNSUPPORTED");
+		Date date = new Date();
+		((TextView) findViewById(R.id.updated_line)).setText(String.format("%tF %tT", date, date));
+    }
+    
     private void update_view() {
-      	XymonServer server = ((XymonQVApplication) getApplication()).xymon_server();
-      	String c = server.color();
-      	Date d = server.last_updated();
-      	String date = "NEVER";
-       	if (d != null) {
-           	date = String.format("%tF %tT", d, d);
-       	}
-       	((TextView) findViewById(R.id.hostname_line)).setText(String.format("%s (%s)", server.host(), server.version()));
-       	((TextView) findViewById(R.id.status_line)).setText(c.toUpperCase());
-       	((TextView) findViewById(R.id.updated_line)).setText(date);
-//       	((TextView) findViewById(R.id.version_line)).setText(server.version());
-       	
-       	setBackgroundColor(c);
-       	
-       	ArrayList<XymonHost> hosts = server.hosts();
+    	try {
+    		XymonServer server = ((XymonQVApplication) getApplication()).xymon_server();
+    		String c = server.color();
+    		Date d = server.last_updated();
+    		String date = "NEVER";
+    		if (d != null) {
+    			date = String.format("%tF %tT", d, d);
+    		}
+    		((TextView) findViewById(R.id.hostname_line)).setText(String.format("%s (%s)", server.host(), server.version()));
+    		((TextView) findViewById(R.id.status_line)).setText(c.toUpperCase());
+    		((TextView) findViewById(R.id.updated_line)).setText(date);
+    		//       	((TextView) findViewById(R.id.version_line)).setText(server.version());
 
-       	LinearLayout ll = (LinearLayout) findViewById(R.id.host_line_container);
-       	ll.removeAllViews();
-       	
-       	for (XymonHost h : hosts) {       		
-       		for (XymonService s : h.services()) {
-       			XymonServiceView xsv = s.view(this);
-       			ll.addView(xsv);	
-       		}
-       	}
+    		setBackgroundColor(c);
 
+    		ArrayList<XymonHost> hosts = server.hosts();
+
+    		LinearLayout ll = (LinearLayout) findViewById(R.id.host_line_container);
+    		ll.removeAllViews();
+
+    		for (XymonHost h : hosts) {       		
+    			for (XymonService s : h.services()) {
+    				XymonServiceView xsv = s.view(this);
+    				ll.addView(xsv);	
+    			}
+    		}
+    	} catch (UnsupportedVersionException e) {
+    		// noop
+    	}
     }
     
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -120,9 +136,13 @@ public class XymonQVActivity extends Activity {
     		break;
     	case R.id.itemClearHistory:
     		Log.d(TAG, "options item : clear history");
-    		XymonServer server = ((XymonQVApplication) getApplication()).xymon_server();
-    		server.clear_history();
-    		load_status();
+    		try {
+    			XymonServer server = ((XymonQVApplication) getApplication()).xymon_server();
+    			server.clear_history();
+    			load_status();
+    		} catch (UnsupportedVersionException e) {
+    			// noop
+    		}
     	}
     	return(true);
     }

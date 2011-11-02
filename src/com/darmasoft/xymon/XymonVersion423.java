@@ -1,6 +1,7 @@
 package com.darmasoft.xymon;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,24 +18,33 @@ public class XymonVersion423 extends XymonVersion {
 
 	public XymonVersion423(String version) {
 		super("4.2.3");
+		Log.d(TAG, "XymonVersion423()");
 	}
 	
 	public static ArrayList<String> supported_versions() {
 		ArrayList<String> al = new ArrayList<String>();
 		al.add("4.2.3");
+		al.add("4.3.0");
 		return al;
 	}
+	
+	public static boolean sufficient_for_version(String version) {
+//		return(true);
+		return(supported_versions().contains(version));
+	}	 
 
 	@Override
 	public String non_green_url() {
-		return(String.format("%s/bb2.html", root_url()));
+		return(String.format("%sbb2.html", root_url()));
 	}
 
 	@Override
 	public XymonQuery parse_non_green_body(String body) {
-		Log.d(TAG, "parse_non_green_body_4_2_3()");
+		Log.d(TAG, "parse_non_green_body()");
 		
 		XymonQuery q = new XymonQuery(m_server);
+		q.set_last_updated(new Date());
+		q.set_version(m_version);
 		
 		try {
 			CleanerProperties props = new CleanerProperties();
@@ -79,19 +89,15 @@ public class XymonVersion423 extends XymonVersion {
 			Log.d(TAG, e.getMessage());
 			e.printStackTrace();
 		}
+		
+		q.set_was_ran(true);
 		return(q);
 
 	}
 
 	@Override
-	public String root_url() {
-		String scheme = (ssl() ? "https://" : "http://");
-		return(String.format("%s%s/", scheme, host()));
-	}
-
-	@Override
 	public String service_url(XymonService s) {
-		return(String.format("%sxymon-cgi/bb-hostsvc.sh?HOST=%s&SERVICE=%s", root_url(), host(), s.name()));
+		return(String.format("%sxymon-cgi/bb-hostsvc.sh?HOST=%s&SERVICE=%s", root_url(), s.host().hostname(), s.name()));
 	}
 
 }

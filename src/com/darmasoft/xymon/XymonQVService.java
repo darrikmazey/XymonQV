@@ -17,8 +17,6 @@ public class XymonQVService extends IntentService {
 	
 	public static final String RECEIVE_DATA_NOTIFICATION = "com.darmasoft.xymon.RECEIVE_DATA_NOTIFICATION";
 	
-	private DBHelper dbHelper;
-
 	public XymonQVService() {
 		super(TAG);
 		
@@ -57,8 +55,6 @@ public class XymonQVService extends IntentService {
 		Date runtime = new Date();
 		Log.d(TAG, String.format("Updater running: %tF %tT", runtime, runtime));
 		
-		this.dbHelper = new DBHelper(this);
-		
 		SharedPreferences prefs = ((XymonQVApplication) getApplication()).prefs;
 		
 		String hostname = prefs.getString("hostname", "www.xymon.org");
@@ -66,31 +62,17 @@ public class XymonQVService extends IntentService {
 		String username = prefs.getString("username", "");
 		String password = prefs.getString("password", "");
 		
-		server = new XymonServer(hostname, ssl, username, password, this);
-
 		try {
-			server.refresh();
+			server = new XymonServer(hostname, ssl, username, password, this);
+
+			XymonQuery q = server.refresh();
+			q.insert(this);
 		} catch (XymonQVException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			handler.post(new ToastMessage(e.getMessage()));
 		}			
 		
-		Date last_updated = server.last_updated();
-		String last_color = server.color();
-		String version = server.version();
-
-		for (XymonHost host : server.hosts()) {
-
-			dbHelper.insert(host, last_updated);
-
-			for (XymonService s : host.services()) {
-				dbHelper.insert(s, last_updated);
-			}
-		}
-
-		dbHelper.insert_run(last_updated, last_color, version);
-
 		Intent intent = new Intent("com.darmasoft.xymon.NEW_DATA");
 		sendBroadcast(intent, RECEIVE_DATA_NOTIFICATION);
 
