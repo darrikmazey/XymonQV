@@ -5,6 +5,7 @@
     android:orientation="vertical"
     android:padding="5dp"
     android:background="#88000000"
+    android:id="@+id/widget_layout"
 	android:layout_margin="5dp" >
 
     <TextView

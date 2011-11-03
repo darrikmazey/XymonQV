@@ -2,6 +2,7 @@ package com.darmasoft.xymon;
 
 import java.util.Date;
 
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
@@ -20,6 +21,7 @@ public class XymonQVWidget extends AppWidgetProvider {
 		Log.d(TAG, String.format("onUpdate() : %tT", new Date()));
 		XymonQVApplication app = ((XymonQVApplication) context.getApplicationContext());
 
+		
 		PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
 		if (!pm.isScreenOn()) {
 			app.cancelIntent();
@@ -43,7 +45,13 @@ public class XymonQVWidget extends AppWidgetProvider {
 			} catch (UnsupportedVersionException e) {
 				color = "black";
 			}
+			
+			Intent intent = new Intent(context, XymonQVActivity.class);
+			PendingIntent pe = PendingIntent.getActivity(context, 0, intent, 0);
+
 			RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
+			views.setOnClickPendingIntent(R.id.widget_layout, pe);
+			
 			views.setInt(R.id.widget_color_indicator, "setBackgroundColor", ColorHelper.colorForString(color));
 			if (count > 0) {
 				views.setTextViewText(R.id.widget_color_indicator, String.format("%d", count));
