@@ -1,6 +1,7 @@
 package com.darmasoft.xymon;
 
 import java.io.IOException;
+import java.net.ProtocolException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -293,7 +294,6 @@ public class XymonServer {
 			Log.d(TAG, String.format("found version: %s", m_version));
 			fetch_non_green_view();
 		} catch (XymonQVException e) {
-			new Date();
 			throw e;
 		}
 		return(m_last_query);
@@ -517,7 +517,7 @@ public class XymonServer {
 		} catch (ClientProtocolException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new XymonQVException(e.getMessage());
+			throw new XymonQVException(e.getCause().getMessage());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

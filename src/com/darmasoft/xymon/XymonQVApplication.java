@@ -53,6 +53,7 @@ public class XymonQVApplication extends Application implements
 			try {
 				m_server = new XymonServer(hostname, ssl, username, password, this);
 			} catch (UnsupportedVersionException e) {
+				e.printStackTrace();
 				Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
 				throw e;
 			}
