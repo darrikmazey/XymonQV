@@ -204,29 +204,56 @@ public class XymonServer {
 				link = null;
 			}
 		} catch (XPatherException e) {
+			e.printStackTrace();
+			Log.d(TAG, "XPatherException: " + e.getMessage());
 			// TODO Auto-generated catch block
-			return("unknown");
+			return(try_regexp_version(body));
 		}
 		
 		if (link == null) {
-			return("unknown");
+			Log.d(TAG, "null link");
+			return(try_regexp_version(body));
 		}
 		String lt = link.getText().toString();
+		Log.d(TAG, "link text: " + lt);
 		Pattern p = Pattern.compile("Xymon \\d.\\d.\\d.*");
 		Matcher m = p.matcher(lt);
 		if (m.find()) {
 			Pattern pv = Pattern.compile("\\d\\.\\d\\.\\d");
 			Matcher mv = pv.matcher(m.group());
 			if (mv.find()) {
+				Log.d(TAG, "found version: " + mv.group());
 				return(mv.group());
 			} else {
-				return("unknown");
+				Log.d(TAG, "couldn't find version");
+				return(try_regexp_version(body));
 			}
 		} else {
-			return("unknown");
+			Log.d(TAG, "couldn't find Xymon");
+			return(try_regexp_version(body));
 		}
 	}
 	
+	public String try_regexp_version(String body) {
+		Log.d(TAG, "trying regexp");
+		Pattern p = Pattern.compile("Xymon \\d.\\d.\\d.*");
+		Matcher m = p.matcher(body);
+		if (m.find()) {
+			Pattern pv = Pattern.compile("\\d\\.\\d\\.\\d");
+			Matcher mv = pv.matcher(m.group());
+			if (mv.find()) {
+				Log.d(TAG, "found version: " + mv.group());
+				return(mv.group());
+			} else {
+				Log.d(TAG, "couldn't find version");
+				return("unknown");
+			}
+		} else {
+			Log.d(TAG, "couldn't find Xymon");
+			return("unknown");
+		}
+
+	}
 //	public String scheme() {
 //		if (m_ssl) {
 //			return("https://");
