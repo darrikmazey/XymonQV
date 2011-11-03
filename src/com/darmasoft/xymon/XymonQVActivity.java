@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -17,6 +18,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class XymonQVActivity extends Activity {
 	
@@ -89,6 +91,9 @@ public class XymonQVActivity extends Activity {
     	try {
     		XymonServer server = ((XymonQVApplication) getApplication()).xymon_server();
     		String c = server.color();
+    		if (c == null) {
+    			c = "unknown";
+    		}
     		Date d = server.last_updated();
     		String date = "NEVER";
     		if (d != null) {
@@ -143,6 +148,15 @@ public class XymonQVActivity extends Activity {
     		} catch (UnsupportedVersionException e) {
     			// noop
     		}
+    	case R.id.itemAbout:
+    		Log.d(TAG, "options item : about");
+    		String app_ver;
+			try {
+				app_ver = this.getPackageManager().getPackageInfo(this.getPackageName(), 0).versionName;
+			} catch (NameNotFoundException e) {
+				app_ver = "8.6.7";
+			}
+    		Toast.makeText(this, String.format("XymonQV v%s\n\n(c)2011 DarmaSoft, LLC.\nandroid@darmasoft.com", app_ver), Toast.LENGTH_LONG).show();
     	}
     	return(true);
     }

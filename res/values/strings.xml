@@ -52,4 +52,5 @@
     <string name="prefs_title_force_version">Force Parser Version</string>
     <string name="prefs_summary_force_version">Only do this if you know what you\'re doing!</string>
     <string name="prefs_title_advanced_settings">Advanced Settings</string>
+    <string name="menu_item_about">About</string>
 </resources>
