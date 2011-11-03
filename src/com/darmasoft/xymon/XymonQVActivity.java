@@ -148,6 +148,7 @@ public class XymonQVActivity extends Activity {
     		} catch (UnsupportedVersionException e) {
     			// noop
     		}
+    		break;
     	case R.id.itemAbout:
     		Log.d(TAG, "options item : about");
     		String app_ver;
@@ -157,6 +158,7 @@ public class XymonQVActivity extends Activity {
 				app_ver = "8.6.7";
 			}
     		Toast.makeText(this, String.format("XymonQV v%s\n\n(c)2011 DarmaSoft, LLC.\nandroid@darmasoft.com", app_ver), Toast.LENGTH_LONG).show();
+    		break;
     	}
     	return(true);
     }
