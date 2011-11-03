@@ -1,7 +1,6 @@
 package com.darmasoft.xymon;
 
 import java.io.IOException;
-import java.net.ProtocolException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
