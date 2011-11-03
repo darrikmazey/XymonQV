@@ -36,16 +36,6 @@
         <activity android:name="PrefsActivity"></activity>
         
         <service android:name=".XymonQVService" />
-          
-        <receiver android:name=".XymonQVWidget">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="com.darmasoft.xymon.NEW_DATA" />
-            </intent-filter>
-            <meta-data android:name="android.appwidget.provider"
-                android:resource="@xml/xymon_qv_widget_info" />
-        </receiver>
+               
     </application>
 </manifest>

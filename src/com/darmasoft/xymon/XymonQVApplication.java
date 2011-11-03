@@ -20,19 +20,10 @@ public class XymonQVApplication extends Application implements
 	
 	public SharedPreferences prefs;
 	private XymonServer m_server = null;
-	private boolean m_showing_widgets = false;
 	
 	public XymonQVApplication() {
 	}
 
-	public boolean showing_widgets() {
-		return(m_showing_widgets);
-	}
-	
-	public void set_showing_widgets(boolean sw) {
-		m_showing_widgets = sw;
-	}
-	
 	public long getInterval() {
 		String sint = prefs.getString("update_interval", "0");
 		long interval = Long.parseLong(sint);
@@ -89,11 +80,10 @@ public class XymonQVApplication extends Application implements
 		PendingIntent pe = pendingIntent();
 		
 		AlarmManager am = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-		am.setInexactRepeating(AlarmManager.RTC, System.currentTimeMillis() + interval, interval, pe);
+		am.setInexactRepeating(AlarmManager.RTC, System.currentTimeMillis(), interval, pe);
 	}
 	
 	public void cancelIntent() {
-		Log.d(TAG, "cancelling intent");
 		PendingIntent pe = pendingIntent();
 		AlarmManager am = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
 		am.cancel(pe);

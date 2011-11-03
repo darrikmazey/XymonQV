@@ -299,10 +299,6 @@ public class XymonServer {
 		return(m_last_query);
 	}
 
-	public int service_count() {
-		return(m_last_query.service_count());
-	}
-	
 	public String color() {
 		return(m_last_query.color());
 	}

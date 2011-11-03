@@ -32,16 +32,6 @@ public class XymonQuery {
 		return m_hosts;
 	}
 	
-	public int service_count() {
-		int c = 0;
-		for (XymonHost h : m_hosts) {
-			for (XymonService s : h.services()) {
-				c += 1;
-			}
-		}
-		return(c);
-	}
-	
 	public void insert(Context ctx) {
 		
 		DBHelper dbHelper = new DBHelper(ctx);
