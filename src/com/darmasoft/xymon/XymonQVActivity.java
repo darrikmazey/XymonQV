@@ -32,7 +32,9 @@ public class XymonQVActivity extends Activity {
 		super.onPause();
 		unregisterReceiver(m_receiver);
 		XymonQVApplication app = ((XymonQVApplication) getApplication());
-		app.cancelIntent();
+		if (!app.showing_widgets()) {
+			app.cancelIntent();
+		}
 	}
 
 	@Override
@@ -41,7 +43,9 @@ public class XymonQVActivity extends Activity {
 		super.onResume();
 		registerReceiver(m_receiver, m_filter, "com.darmasoft.xymon.SEND_DATA_NOTIFICATION", null);
 		XymonQVApplication app = ((XymonQVApplication) getApplication());
-		app.setIntentForCurrentInterval();
+		if (!app.showing_widgets()) {
+			app.setIntentForCurrentInterval();
+		}
 		load_status();
 	}
 
