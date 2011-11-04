@@ -4,9 +4,7 @@ import java.util.Date;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Handler;
-import android.util.Log;
 import android.widget.Toast;
 
 public class XymonQVService extends IntentService {
@@ -19,13 +17,13 @@ public class XymonQVService extends IntentService {
 	
 	public XymonQVService() {
 		super(TAG);
-		
+				
 		Log.d(TAG, "constructor");
 		try {
 			Class.forName("android.os.AsyncTask");
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.printStackTrace(e);
 		}
 	}
 	
@@ -55,21 +53,15 @@ public class XymonQVService extends IntentService {
 		Date runtime = new Date();
 		Log.d(TAG, String.format("Updater running: %tF %tT", runtime, runtime));
 		
-		SharedPreferences prefs = ((XymonQVApplication) getApplication()).prefs;
-		
-		String hostname = prefs.getString("hostname", "www.xymon.org");
-		boolean ssl = prefs.getBoolean("use_ssl", false);
-		String username = prefs.getString("username", "");
-		String password = prefs.getString("password", "");
+		XymonQVApplication app = ((XymonQVApplication) getApplication());
 		
 		try {
-			server = new XymonServer(hostname, ssl, username, password, this);
+			server = app.xymon_server();
 
 			XymonQuery q = server.refresh();
 			q.insert(this);
 		} catch (XymonQVException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.printStackTrace(e);
 			handler.post(new ToastMessage(e.getMessage()));
 		}			
 		

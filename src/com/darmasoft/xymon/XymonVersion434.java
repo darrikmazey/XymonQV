@@ -10,8 +10,6 @@ import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
 import org.htmlcleaner.XPatherException;
 
-import android.util.Log;
-
 public class XymonVersion434 extends XymonVersion {
 
 	private static final String TAG = "XymonVersion434";
@@ -95,7 +93,7 @@ public class XymonVersion434 extends XymonVersion {
 			}
 		} catch (XPatherException e) {
 			Log.d(TAG, e.getMessage());
-			e.printStackTrace();
+			Log.printStackTrace(e);
 		}
 		
 		q.set_was_ran(true);

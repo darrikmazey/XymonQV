@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import android.util.Log;
 
 public class HttpHelper {
 
@@ -29,11 +28,11 @@ public class HttpHelper {
 			}
 			return(buffer.toString());
 			} catch(IOException e) {
-				e.printStackTrace();
+				Log.printStackTrace(e);
 			}
 		} else if (sc == 401) {
 			InvalidUsernameOrPasswordException e = new InvalidUsernameOrPasswordException();
-			e.printStackTrace();
+			Log.printStackTrace(e);
 			throw e;
 			// status not 200
 		}

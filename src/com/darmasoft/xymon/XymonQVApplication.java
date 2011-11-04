@@ -8,8 +8,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.preference.PreferenceManager;
-import android.util.Log;
-import android.widget.Toast;
 
 public class XymonQVApplication extends Application implements
 		OnSharedPreferenceChangeListener {
@@ -34,6 +32,10 @@ public class XymonQVApplication extends Application implements
 		super.onCreate();
 		this.prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		this.prefs.registerOnSharedPreferenceChangeListener(this);
+		
+		boolean dbg = prefs.getBoolean("enable_debug_log", false);
+		Log.set_debug_mode(dbg);
+		
 		Log.i(TAG, "created");
 	}
 	
@@ -53,8 +55,6 @@ public class XymonQVApplication extends Application implements
 			try {
 				m_server = new XymonServer(hostname, ssl, username, password, this);
 			} catch (UnsupportedVersionException e) {
-				e.printStackTrace();
-				Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
 				throw e;
 			}
 		}
@@ -95,6 +95,12 @@ public class XymonQVApplication extends Application implements
 		m_server = null;
 		if (key.equals("update_interval")) {
 			setIntentForCurrentInterval();
+		}
+		if (key.equals("enable_debug_log")) {
+			Log.d(TAG, "debug log settings changed");
+			boolean dbg = prefs.getBoolean("enable_debug_log", false);
+			Log.d(TAG, String.format("debug log setting: %b", dbg));
+			Log.set_debug_mode(dbg);
 		}
 	}
 

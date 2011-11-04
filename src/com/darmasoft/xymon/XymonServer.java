@@ -37,7 +37,6 @@ import org.htmlcleaner.TagNode;
 import org.htmlcleaner.XPatherException;
 
 import android.content.Context;
-import android.util.Log;
 
 public class XymonServer {
 	private boolean m_ssl = false;
@@ -96,7 +95,7 @@ public class XymonServer {
 		} catch (UnsupportedVersionException e) {
 			throw e;
 		} catch (XymonQVException e) {
-			e.printStackTrace();
+			Log.printStackTrace(e);
 		}
 	}
 
@@ -204,7 +203,7 @@ public class XymonServer {
 				link = null;
 			}
 		} catch (XPatherException e) {
-			e.printStackTrace();
+			Log.printStackTrace(e);
 			Log.d(TAG, "XPatherException: " + e.getMessage());
 			// TODO Auto-generated catch block
 			return(try_regexp_version(body));
@@ -502,24 +501,24 @@ public class XymonServer {
 		try {
 			res = client.execute(get, m_http_context);
 		} catch(ConnectTimeoutException e) {
-			e.printStackTrace();
+			Log.printStackTrace(e);
 			ConnectionErrorException ne = new ConnectionErrorException("Connection Error: " + e.getMessage());
 			throw ne;
 		} catch (HttpHostConnectException e) {
-			e.printStackTrace();
+			Log.printStackTrace(e);
 			ConnectionErrorException ne = new ConnectionErrorException("Connection Error: " + e.getMessage());
 			throw ne;
 		} catch (UnknownHostException e) {
-			e.printStackTrace();
+			Log.printStackTrace(e);
 			ConnectionErrorException ne = new ConnectionErrorException("Unknown Host: " + e.getMessage());
 			throw ne;
 		} catch (ClientProtocolException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.printStackTrace(e);
 			throw new XymonQVException(e.getCause().getMessage());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.printStackTrace(e);
 			throw new XymonQVException("Error:\n" + e.getClass() + "\n" + e.getMessage());
 		}
 		String body = "";

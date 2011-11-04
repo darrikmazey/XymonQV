@@ -1,7 +1,5 @@
 package com.darmasoft.xymon;
 
-import android.util.Log;
-
 public class XymonVersionFactory {
 
 	private static final String TAG = "XymonVersionFactory";

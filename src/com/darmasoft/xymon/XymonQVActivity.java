@@ -12,7 +12,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -141,13 +140,12 @@ public class XymonQVActivity extends Activity {
     		break;
     	case R.id.itemClearHistory:
     		Log.d(TAG, "options item : clear history");
-    		try {
-    			XymonServer server = ((XymonQVApplication) getApplication()).xymon_server();
-    			server.clear_history();
-    			load_status();
-    		} catch (UnsupportedVersionException e) {
-    			// noop
-    		}
+    		DBHelper dbHelper = new DBHelper(this);
+    		dbHelper.delete_all_statuses();
+    		dbHelper.delete_all_hosts();
+    		dbHelper.delete_all_runs();
+    		Log.delete_debug_log();
+    		load_status();
     		break;
     	case R.id.itemAbout:
     		Log.d(TAG, "options item : about");

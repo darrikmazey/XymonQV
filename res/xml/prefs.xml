@@ -35,5 +35,16 @@
         	android:title="@string/prefs_title_force_version" />
 	    
     </PreferenceCategory>
+    
+    <PreferenceCategory
+        android:title="@string/prefs_title_debug_category">
+        
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:summary="@string/prefs_summary_enable_debug_log"
+            android:title="@string/prefs_title_enable_debug_log"
+            android:key="enable_debug_log"/>
+        
+    </PreferenceCategory>
 
 </PreferenceScreen>
