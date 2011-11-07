@@ -41,6 +41,10 @@ public class XymonQVActivity extends Activity {
 		registerReceiver(m_receiver, m_filter, "com.darmasoft.xymon.SEND_DATA_NOTIFICATION", null);
 		XymonQVApplication app = ((XymonQVApplication) getApplication());
 		app.setIntentForCurrentInterval();
+		if (app.update_interval() == 0) {
+    		prog_dialog = ProgressDialog.show(this, "", "Loading data...");
+    		startService(new Intent(this, XymonQVService.class));
+		}
 		load_status();
 	}
 
