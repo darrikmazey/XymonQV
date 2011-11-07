@@ -13,11 +13,16 @@ public class XymonQuery {
 	private String m_version;
 	private Date m_date_ran = null;
 	private boolean m_ran;
+	private XymonServer m_server;
 
 	private ArrayList<XymonHost> m_hosts = new ArrayList<XymonHost>();
 	
 	public XymonQuery(XymonServer s) {
-		
+		m_server = s;
+	}
+	
+	public XymonServer server() {
+		return(m_server);
 	}
 	
 	public void set_hosts(ArrayList<XymonHost> hosts) {
@@ -30,6 +35,32 @@ public class XymonQuery {
 	
 	public ArrayList<XymonHost> hosts() {
 		return m_hosts;
+	}
+	
+	public XymonHost get_host_by_hostname(String hostname) {
+		for (XymonHost h : hosts()) {
+			if (h.hostname().equals(hostname)) {
+				return h;
+			}
+		}
+		return null;
+	}
+
+	public String worst_color() {
+		String worst = "green";
+		for (XymonHost h : hosts()) {
+			for (XymonService s : h.services()) {
+				String c = s.color();
+				if (c.equals("red")) {
+					worst = "red";
+				} else if (c.equals("yellow") && (!worst.equals("red"))) {
+					worst = "yellow";
+				} else if (c.equals("purple") && (!(worst.equals("yellow") || worst.equals("red")))) {
+					worst = "purple";
+				}
+			}
+		}
+		return(worst);
 	}
 	
 	public void insert(Context ctx) {

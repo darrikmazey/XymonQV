@@ -39,13 +39,15 @@ abstract public class XymonVersion {
 	 
 	 abstract public String service_url(XymonService s);
 	 abstract public String non_green_url();
+	 abstract public String critical_url();
 	 
 	 public String root_url() {
 		 String scheme = (ssl() ? "https://" : "http://");
 		 return(String.format("%s%s/", scheme, host()));
 	 }
 	 
-	 abstract public XymonQuery parse_non_green_body(String body);
+	 abstract public XymonQuery parse_non_green_body();
+	 abstract public XymonQuery parse_critical_body();
 	 
 	 public static ArrayList<String> supported_versions() {
 		 return(new ArrayList<String>());

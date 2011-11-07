@@ -23,6 +23,7 @@ public class XymonHost {
 	
 	public void add_service(XymonService svc) {
 		svc.setHost(this);
+		svc.set_server(server);
 		m_services.add(svc);
 	}
 	

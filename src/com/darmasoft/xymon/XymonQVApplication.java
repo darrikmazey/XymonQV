@@ -13,6 +13,8 @@ public class XymonQVApplication extends Application implements
 		OnSharedPreferenceChangeListener {
 
 	private static final String TAG = "XymonQVApplication";
+	public static final String CRITICAL = "critical";
+	public static final String NON_GREEN = "non_green";
 	
 	public static int INTERVAL_NEVER = 0;
 	
@@ -51,9 +53,10 @@ public class XymonQVApplication extends Application implements
 			boolean ssl = prefs.getBoolean("use_ssl", false);
 			String username = prefs.getString("username", "");
 			String password = prefs.getString("password", "");
+			String view = prefs.getString("use_view", NON_GREEN);
 			
 			try {
-				m_server = new XymonServer(hostname, ssl, username, password, this);
+				m_server = new XymonServer(hostname, ssl, username, password, view, this);
 			} catch (UnsupportedVersionException e) {
 				throw e;
 			}

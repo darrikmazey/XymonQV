@@ -30,7 +30,7 @@ public class XymonServiceView extends LinearLayout implements OnClickListener {
 		service = svc;
 		ctx = context;
 		
-		Log.d(TAG, "constructor: " + service.name());
+//		Log.d(TAG, "constructor: " + service.name());
 		
 		int color = ColorHelper.colorForString(service.color());
 		
@@ -120,11 +120,8 @@ public class XymonServiceView extends LinearLayout implements OnClickListener {
 		
 		public boolean onFlingRight() {
 			Log.d(TAG, "FLING RIGHT");
-			XymonHost host = service.host();
-			XymonServer server = host.server();
-			String version = server.version();
-			Log.d(TAG, String.format("Server version: %s", version));
-			String url = service.host().server().service_url(service);
+			String url = service.url();
+			Log.d(TAG, String.format("found url: %s", url));
 			Intent i = new Intent(Intent.ACTION_VIEW);
 			i.setData(Uri.parse(url));
 			ctx.startActivity(i);

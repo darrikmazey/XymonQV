@@ -34,9 +34,28 @@ public class XymonVersion423 extends XymonVersion {
 	public String non_green_url() {
 		return(String.format("%sbb2.html", root_url()));
 	}
+	
+	@Override
+	public String critical_url() {
+		return(String.format("%sxymon-cgi/hobbit-nkview.sh", root_url()));
+	}
 
 	@Override
-	public XymonQuery parse_non_green_body(String body) {
+	public XymonQuery parse_critical_body() {
+//		String body = m_server.last_critical_body();
+		XymonQuery q = new XymonQuery(m_server);
+		q.set_last_updated(new Date());
+		q.set_version(m_version);
+		
+		// parse here
+		
+		q.set_was_ran(true);
+		return(q);
+	}
+	
+	@Override
+	public XymonQuery parse_non_green_body() {
+		String  body = m_server.last_non_green_body();
 		Log.d(TAG, "parse_non_green_body()");
 		
 		XymonQuery q = new XymonQuery(m_server);

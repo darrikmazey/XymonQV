@@ -37,8 +37,14 @@ public class XymonVersion434 extends XymonVersion {
 	}
 
 	@Override
-	public XymonQuery parse_non_green_body(String body) {
+	public String critical_url() {
+		return(String.format("%sxymon-cgi/criticalview.sh", root_url()));
+	}
+	
+	@Override
+	public XymonQuery parse_non_green_body() {
 		Log.d(TAG, "parse_non_green_body()");
+		String body = m_server.last_non_green_body();
 		
 		XymonQuery q = new XymonQuery(m_server);
 		q.set_last_updated(new Date());
@@ -99,7 +105,20 @@ public class XymonVersion434 extends XymonVersion {
 		q.set_was_ran(true);
 		return(q);
 	}
+	
+	@Override
+	public XymonQuery parse_critical_body() {
+//		String body = m_server.last_critical_body();
+		XymonQuery q = new XymonQuery(m_server);
+		q.set_last_updated(new Date());
+		q.set_version(m_version);
 		
+		// parse here
+		
+		q.set_was_ran(true);
+		return(q);
+	}
+	
 	@Override
 	public String service_url(XymonService s) {
 		return(String.format("%sxymon-cgi/svcstatus.sh?HOST=%s&SERVICE=%s", root_url(), s.host().hostname(), s.name()));

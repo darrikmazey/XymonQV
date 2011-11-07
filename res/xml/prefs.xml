@@ -24,7 +24,7 @@
         android:key="update_interval"
         android:title="@string/prefs_title_update_interval" android:defaultValue="0"/>
     
-    <PreferenceCategory android:title="@string/prefs_title_advanced_settings">
+    <ListPreference android:entries="@array/view_strings" android:key="use_view" android:title="@string/prefs_title_use_view" android:summary="@string/prefs_summary_use_view" android:entryValues="@array/view_values" android:defaultValue="non_green"/><PreferenceCategory android:title="@string/prefs_title_advanced_settings">
         
 	    <ListPreference
     	    android:defaultValue=""
@@ -46,5 +46,6 @@
             android:key="enable_debug_log"/>
         
     </PreferenceCategory>
+    
 
 </PreferenceScreen>

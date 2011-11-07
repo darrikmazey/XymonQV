@@ -37,11 +37,13 @@
         <item >None</item>
         <item >4.2.3</item>
         <item >4.3.4</item>
+        <item >API</item>
     </string-array>
     <string-array name="parser_values">
         <item ></item>
         <item >4.2.3</item>
         <item >4.3.4</item>
+        <item >API</item>
     </string-array>
         <string name="prefs_dialog_title_update_interval">How often should xymon be checked?</string>
     <string name="menu_title_clear_history">Clear History</string>
@@ -56,4 +58,14 @@
     <string name="prefs_title_debug_category">Debug Settings</string>
     <string name="prefs_title_enable_debug_log">Enable Debug Logging</string>
     <string name="prefs_summary_enable_debug_log">Turns on debug logging</string>
+    <string-array name="view_strings">
+        <item >Non-Green</item>
+        <item >Critical</item>
+    </string-array>
+    <string-array name="view_values">
+        <item >non_green</item>
+        <item >critical</item>
+    </string-array>
+        <string name="prefs_title_use_view">View</string>
+        <string name="prefs_summary_use_view">Choose Which View to Use</string>
 </resources>

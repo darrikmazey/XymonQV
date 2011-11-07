@@ -16,7 +16,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
 	static final String TAG = "DBHelper";
 	static final String DB_NAME = "xymonqv.db";
-	static final int DB_VERSION = 3;
+	static final int DB_VERSION = 4;
 	static final String HOST_TABLE = "hosts";
 	static final String STATUS_TABLE = "statuses";
 	static final String RUN_TABLE = "runs";
@@ -29,6 +29,7 @@ public class DBHelper extends SQLiteOpenHelper {
 	static final String C_COLOR = "color";
 	static final String C_DURATION = "duration";
 	static final String C_VERSION = "version";
+	static final String C_URL = "url";
 	
 	Context context;
 	
@@ -41,7 +42,7 @@ public class DBHelper extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 		String sql = "create table " + HOST_TABLE + " ( " + C_HOSTNAME + " text primary key, " + C_CREATED_AT + " int)";
 		db.execSQL(sql);
-		sql = "create table " + STATUS_TABLE + " ( " + C_ID + " int primary key, " + C_HOST_ID + " text, " + C_SVC_NAME + " text, " + C_COLOR + " text, " + C_DURATION + " int, " + C_CREATED_AT + " text)"; 
+		sql = "create table " + STATUS_TABLE + " ( " + C_ID + " int primary key, " + C_HOST_ID + " text, " + C_SVC_NAME + " text, " + C_COLOR + " text, " + C_DURATION + " int, " + C_CREATED_AT + " text, " + C_URL + " text)"; 
 		db.execSQL(sql);
 		sql = "create table " + RUN_TABLE + " ( " + C_CREATED_AT + " text primary key, " + C_COLOR + " text, " + C_VERSION + " text)";  
 		db.execSQL(sql);
@@ -109,6 +110,7 @@ public class DBHelper extends SQLiteOpenHelper {
 		values.put(DBHelper.C_COLOR, service.color());
 		values.put(DBHelper.C_DURATION, service.duration());
 		values.put(DBHelper.C_CREATED_AT, last_updated_str);
+		values.put(DBHelper.C_URL, service.url());
 		try {
 			db.insertOrThrow(DBHelper.STATUS_TABLE, null, values);
 		} catch (SQLiteConstraintException e) {
@@ -164,8 +166,8 @@ public class DBHelper extends SQLiteOpenHelper {
 		
 		while (cursor.moveToNext()) {
 			XymonHost host = new XymonHost(cursor.getString(0));
-			load_services_for_host(host);
 			host.setServer(server);
+			load_services_for_host(host);
 			hosts.add(host);
 		}
 		cursor.close();
@@ -189,7 +191,10 @@ public class DBHelper extends SQLiteOpenHelper {
 			String svc_name = cursor.getString(2);
 			String svc_color = cursor.getString(3);
 			String svc_duration = cursor.getString(4);
-			XymonService svc = new XymonService(svc_name, svc_color, false, svc_duration);
+			String svc_url = cursor.getString(6);
+			Log.d(TAG, String.format("found url [%s] for service [%s]", svc_url, svc_name));
+			XymonService svc = new XymonService(svc_name, svc_color, false, svc_duration, svc_url);
+			svc.set_server(host.server());
 			host.add_service(svc);
 		}
 		cursor.close();
