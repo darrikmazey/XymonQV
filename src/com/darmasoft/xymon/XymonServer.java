@@ -56,6 +56,7 @@ public class XymonServer {
 	private boolean m_has_api_target = false;
 	private XymonQuery m_last_query = null;
 	private XymonVersion m_xv = null;
+	private String m_filter = null;
 	
 	private ClientConnectionManager m_conn_manager;
 	private HttpContext m_http_context;
@@ -117,6 +118,14 @@ public class XymonServer {
 		}
 	}
 
+	public void set_filter(String f) {
+		m_filter = f;
+	}
+	
+	public String filter() {
+		return(m_filter);
+	}
+	
 	public String api_target_url() {
 		XymonVersion xv = XymonVersionFactory.api_parser("API");
 		xv.set_server(this);
@@ -311,6 +320,17 @@ public class XymonServer {
 		try {
 			if (m_version.length() == 0 || m_version.equals("unknown")) {
 				m_version = fetch_version();
+				m_has_api_target = check_api_target();
+				
+				String force_version = ((XymonQVApplication) m_context.getApplicationContext()).prefs.getString("force_version", "");
+				if (force_version.length() > 0) {
+					m_xv = XymonVersionFactory.for_version(force_version);
+				} else if (m_has_api_target) {
+					m_xv = XymonVersionFactory.api_parser(m_version);
+				} else {
+					m_xv = XymonVersionFactory.for_version(m_version);
+				}
+				m_xv.set_server(this);
 			} else {
 				Log.d(TAG, String.format("using cached version: %s", m_version));
 			}

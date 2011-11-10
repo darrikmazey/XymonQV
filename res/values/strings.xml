@@ -68,4 +68,6 @@
     </string-array>
         <string name="prefs_title_use_view">View</string>
         <string name="prefs_summary_use_view">Choose Which View to Use</string>
+        <string name="prefs_title_appfeed_filter">Filter</string>
+        <string name="prefs_summary_appfeed_filter">Filter string to be used with appfeed.sh</string>
 </resources>

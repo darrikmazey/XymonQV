@@ -21,12 +21,20 @@ public class XymonVersionAPI extends XymonVersion {
 
 	@Override
 	public String critical_url() {
-		return(String.format("%sxymon-cgi/appfeed-critical.sh", root_url()));
+		if (m_server.filter() == null) {
+			return(String.format("%sxymon-cgi/appfeed-critical.sh", root_url()));
+		} else {
+			return(String.format("%sxymon-cgi/appfeed-critical.sh?filter=%s", root_url(), m_server.filter()));
+		}
 	}
 
 	@Override
 	public String non_green_url() {
-		return(String.format("%sxymon-cgi/appfeed.sh", root_url()));
+		if (m_server.filter() == null) {
+			return(String.format("%sxymon-cgi/appfeed.sh", root_url()));
+		} else {
+			return(String.format("%sxymon-cgi/appfeed.sh?filter=%s", root_url(), m_server.filter()));
+		}
 	}
 
 	@Override

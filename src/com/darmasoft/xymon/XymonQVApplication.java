@@ -54,9 +54,11 @@ public class XymonQVApplication extends Application implements
 			String username = prefs.getString("username", "");
 			String password = prefs.getString("password", "");
 			String view = prefs.getString("use_view", NON_GREEN);
+			String filter_string = prefs.getString("appfeed_filter", "");
 			
 			try {
 				m_server = new XymonServer(hostname, ssl, username, password, view, this);
+				m_server.set_filter(filter_string);
 			} catch (UnsupportedVersionException e) {
 				throw e;
 			}
@@ -95,16 +97,22 @@ public class XymonQVApplication extends Application implements
 	@Override
 	public synchronized void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
 			String key) {
-		m_server = null;
 		if (key.equals("update_interval")) {
+			int ui = update_interval();
+			Log.d(TAG, String.format("SETTING: update interval: %d", ui));
 			setIntentForCurrentInterval();
 		}
 		if (key.equals("enable_debug_log")) {
-			Log.d(TAG, "debug log settings changed");
 			boolean dbg = prefs.getBoolean("enable_debug_log", false);
-			Log.d(TAG, String.format("debug log setting: %b", dbg));
+			Log.d(TAG, String.format("SETTING: debug log: %b", dbg));
 			Log.set_debug_mode(dbg);
 		}
+		if (key.equals("hostname")) {
+			String hostname = prefs.getString("hostname", "");
+			Log.d(TAG, String.format("SETTING: hostname: %s", hostname));
+			m_server.clear_history();
+		}
+		m_server = null;
 	}
 
 }
