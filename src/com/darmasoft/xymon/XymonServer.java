@@ -15,6 +15,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.params.ClientPNames;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.conn.HttpHostConnectException;
@@ -82,6 +83,7 @@ public class XymonServer {
 		m_http_params.setParameter(ConnManagerPNames.MAX_TOTAL_CONNECTIONS, 3);
 		m_http_params.setParameter(ConnManagerPNames.MAX_CONNECTIONS_PER_ROUTE, new ConnPerRouteBean(1));
 		m_http_params.setParameter(HttpProtocolParams.USE_EXPECT_CONTINUE, false);
+		m_http_params.setParameter(ClientPNames.ALLOW_CIRCULAR_REDIRECTS, true);
 		HttpConnectionParams.setConnectionTimeout(m_http_params, 3000);
 		HttpConnectionParams.setSoTimeout(m_http_params, 5000);
 		HttpProtocolParams.setVersion(m_http_params, HttpVersion.HTTP_1_1);
