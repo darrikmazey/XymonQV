@@ -72,8 +72,13 @@ public class XymonVersion423 extends XymonVersion {
 			TagNode doc = new HtmlCleaner(props).clean(body);
 				
 			TagNode doc_body = ((TagNode) doc.evaluateXPath("//body")[0]);
+			String c = doc_body.getAttributeByName("bgcolor");
+			if (c == null) {
+				c = doc_body.getAttributeByName("class");
+			}
 			
-			q.set_color(doc_body.getAttributeByName("bgcolor"));
+			Log.d(TAG, String.format("found color: %s", c));
+			q.set_color(c);
 			
 			Object[] non_green_lines = doc.evaluateXPath("//table[@summary]//td[@nowrap]");
 			Log.d(TAG, String.format("found %d non green lines", non_green_lines.length));

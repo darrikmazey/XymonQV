@@ -1,6 +1,8 @@
 package com.darmasoft.xymon;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -347,7 +349,20 @@ public class XymonServer {
 		
 		HttpClient client = new DefaultHttpClient(m_conn_manager, m_http_params);
 
-		HttpGet get = new HttpGet(url);
+		URI uri;
+		try {
+			uri = new URI(url);
+		} catch (URISyntaxException e) {
+			Log.printStackTrace(e);
+			throw new XymonQVException(String.format("URI Syntax Error: %s", url));
+		}
+		
+		Log.d(TAG, String.format("scheme: %s", uri.getScheme()));
+		Log.d(TAG, String.format("host: %s", uri.getHost()));
+		Log.d(TAG, String.format("port: %d", uri.getPort()));
+		Log.d(TAG, String.format("path: %s", uri.getPath()));
+		
+		HttpGet get = new HttpGet(uri);
 		get.setHeader("User-Agent", String.format("XymonQV v%s", app_ver));
 		HttpResponse res = null;
 		try {
