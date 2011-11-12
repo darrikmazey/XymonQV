@@ -30,6 +30,7 @@ public class DBHelper extends SQLiteOpenHelper {
 	static final String C_DURATION = "duration";
 	static final String C_VERSION = "version";
 	static final String C_URL = "url";
+	static final String C_STATUS_COUNT = "status_count";
 	
 	Context context;
 	
@@ -96,6 +97,25 @@ public class DBHelper extends SQLiteOpenHelper {
 		db.close();
 		
 		return(true);
+	}
+	
+	public Cursor get_services_cursor() {
+		SQLiteDatabase db = this.getWritableDatabase();
+		String sql = "SELECT statuses.* from statuses, runs " +
+		"WHERE statuses.created_at = runs.created_at " +
+		"AND statuses.created_at IN (SELECT max(created_at) FROM runs) ";
+		Cursor cursor = db.rawQuery(sql, null);
+		return(cursor);
+	}
+	
+	public Cursor get_hosts_cursor() {
+		SQLiteDatabase db = this.getWritableDatabase();
+		String sql = "SELECT statuses.host_id, count(*) status_count, statuses.host_id _id from statuses, runs " +
+		"WHERE statuses.created_at = runs.created_at " +
+		"AND statuses.created_at IN (SELECT max(created_at) FROM runs) " +
+		"GROUP BY statuses.host_id";
+		Cursor cursor = db.rawQuery(sql, null);
+		return(cursor);
 	}
 	
 	public synchronized boolean insert(XymonService service, Date last_updated) {

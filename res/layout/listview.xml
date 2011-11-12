@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:gravity="center"
+        android:background="#333333"
+        android:layout_weight="0.50" >
+        
+	    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    	    android:orientation="vertical"
+        	android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+       	    android:gravity="center"
+        	android:background="#333333"
+        	android:layout_weight="0.50" >
+        
+	        <TextView
+    	        android:id="@+id/hostname_line"
+        	    android:layout_width="wrap_content"
+            	android:layout_height="wrap_content"
+	            android:layout_weight="1"
+    	        android:text="HOST"
+	            android:textSize="18sp"
+    	        android:background="#333333" />
+	        
+	        <TextView
+	            android:id="@+id/hostname_updated"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_weight="1"
+	            android:text="NEVER"
+	            android:textSize="12sp"
+	            android:background="#333333" />
+	    </LinearLayout>
+	    
+        <TextView
+            android:id="@+id/hostname_color"
+            android:layout_width="50dip"
+            android:layout_height="match_parent"
+            android:background="#000000" />
+        
+    </LinearLayout>
+    
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="4" >
+        
+        <ListView
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:id="@+id/listview"
+            android:background="#000000"
+            />        
+ 
+    </LinearLayout>
+        
+</LinearLayout>
