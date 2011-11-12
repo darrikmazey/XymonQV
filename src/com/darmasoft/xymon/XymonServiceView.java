@@ -35,11 +35,20 @@ public class XymonServiceView extends LinearLayout implements OnClickListener {
 		int color = ColorHelper.colorForString(service.color());
 		
 		this.setOrientation(HORIZONTAL);
-		this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, 80));
+		LayoutParams p = new LayoutParams(LayoutParams.MATCH_PARENT, 80);
+		p.setMargins(0,0,0,5);
+		this.setLayoutParams(p);
 		this.setPadding(5,5,5,5);
 		Drawable d = getResources().getDrawable(R.drawable.text_view_border);
 		d.setColorFilter(color, PorterDuff.Mode.DARKEN);
 		this.setBackgroundDrawable(d);
+
+		TextView tv_color = new TextView(context);
+		tv_color.setGravity(Gravity.LEFT);
+		tv_color.setLayoutParams(new LayoutParams(50, LayoutParams.MATCH_PARENT));
+		tv_color.setBackgroundColor(color);
+		tv_color.setPadding(5,5,5,5);
+		this.addView(tv_color);
 		
 		TextView tv_hostname = new TextView(context);
 		tv_hostname.setText(service.host().hostname());
@@ -66,12 +75,6 @@ public class XymonServiceView extends LinearLayout implements OnClickListener {
 		iv_checkmark.setPadding(5,5,5,5);
 		this.addView(iv_checkmark);
 		
-		TextView tv_color = new TextView(context);
-		tv_color.setGravity(Gravity.RIGHT);
-		tv_color.setLayoutParams(new LayoutParams(50, LayoutParams.MATCH_PARENT));
-		tv_color.setBackgroundColor(color);
-		tv_color.setPadding(5,5,5,5);
-		this.addView(tv_color);
 
     	gestureDetector = new GestureDetector(new MyGestureDetector());
     	

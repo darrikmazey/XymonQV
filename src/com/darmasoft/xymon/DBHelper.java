@@ -61,6 +61,7 @@ public class DBHelper extends SQLiteOpenHelper {
 		SQLiteDatabase db = this.getWritableDatabase();
 		
 		db.execSQL("delete from statuses");
+		db.close();
 		return(true);
 	}
 	
@@ -68,6 +69,7 @@ public class DBHelper extends SQLiteOpenHelper {
 		SQLiteDatabase db = this.getWritableDatabase();
 		
 		db.execSQL("delete from hosts");
+		db.close();
 		return(true);
 	}
 	
@@ -75,6 +77,7 @@ public class DBHelper extends SQLiteOpenHelper {
 		SQLiteDatabase db = this.getWritableDatabase();
 		
 		db.execSQL("delete from runs");
+		db.close();
 		return(true);
 	}
 	public synchronized boolean insert(XymonHost host, Date last_updated) {

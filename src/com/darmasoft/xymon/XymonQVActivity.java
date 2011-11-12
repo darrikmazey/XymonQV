@@ -56,7 +56,7 @@ public class XymonQVActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
-    	setContentView(R.layout.status);
+    	setContentView(R.layout.listview);
     	
     	prefs = PreferenceManager.getDefaultSharedPreferences(this);
     	
@@ -102,9 +102,8 @@ public class XymonQVActivity extends Activity {
     		if (d != null) {
     			date = String.format("%tF %tT", d, d);
     		}
-    		((TextView) findViewById(R.id.hostname_line)).setText(String.format("%s (%s)", server.host(), server.version()));
-    		((TextView) findViewById(R.id.status_line)).setText(c.toUpperCase());
-    		((TextView) findViewById(R.id.updated_line)).setText(date);
+    		((TextView) findViewById(R.id.hostname_line)).setText(String.format("%s", server.host()));
+    		((TextView) findViewById(R.id.hostname_updated)).setText(date);
     		//       	((TextView) findViewById(R.id.version_line)).setText(server.version());
 
     		setBackgroundColor(c);
@@ -115,10 +114,8 @@ public class XymonQVActivity extends Activity {
     		ll.removeAllViews();
 
     		for (XymonHost h : hosts) {       		
-    			for (XymonService s : h.services()) {
-    				XymonServiceView xsv = s.view(this);
-    				ll.addView(xsv);	
-    			}
+    			XymonHostView xhv = new XymonHostView(h, this);
+    			ll.addView(xhv);	
     		}
     	} catch (UnsupportedVersionException e) {
     		// noop
@@ -161,12 +158,16 @@ public class XymonQVActivity extends Activity {
 			}
     		Toast.makeText(this, String.format("XymonQV v%s\n\n(c)2011 DarmaSoft, LLC.\nandroid@darmasoft.com", app_ver), Toast.LENGTH_LONG).show();
     		break;
+    	case R.id.itemNewView:
+    		Log.d(TAG, "options item : new view");
+    		startActivity(new Intent(this, XymonQVHostActivity.class));
+    		break;
     	}
     	return(true);
     }
     
     public void setBackgroundColor(String c) {
-    	findViewById(R.id.color_indicator).setBackgroundColor(ColorHelper.colorForString(c));
+    	findViewById(R.id.hostname_color).setBackgroundColor(ColorHelper.colorForString(c));
     }
 
     class XymonQVReceiver extends BroadcastReceiver {

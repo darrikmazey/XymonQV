@@ -38,4 +38,33 @@ public class XymonHost {
 	public XymonServer server() {
 		return(server);
 	}
+	
+	public int service_count_by_color(String c) {
+		int count = 0;
+		for (XymonService s : m_services) {
+			if (s.color().equals(c)) {
+				count++;
+			}
+		}
+		return(count);
+	}
+	
+	public int service_count() {
+		return(m_services.size());
+	}
+	
+	public String worst_color() {
+		String worst = "green";
+		for (XymonService s : services()) {
+			String c = s.color();
+			if (c.equals("red")) {
+				worst = "red";
+			} else if (c.equals("yellow") && (!worst.equals("red"))) {
+				worst = "yellow";
+			} else if (c.equals("purple") && (!(worst.equals("yellow") || worst.equals("red")))) {
+				worst = "purple";
+			}
+		}
+		return(worst);
+	}
 }
