@@ -158,10 +158,6 @@ public class XymonQVActivity extends Activity {
 			}
     		Toast.makeText(this, String.format("XymonQV v%s\n\n(c)2011 DarmaSoft, LLC.\nandroid@darmasoft.com", app_ver), Toast.LENGTH_LONG).show();
     		break;
-    	case R.id.itemNewView:
-    		Log.d(TAG, "options item : new view");
-    		startActivity(new Intent(this, XymonQVHostActivity.class));
-    		break;
     	}
     	return(true);
     }

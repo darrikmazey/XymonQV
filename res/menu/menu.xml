@@ -4,7 +4,6 @@
     <item android:id="@+id/itemRefresh" android:title="@string/title_refresh" android:icon="@drawable/ic_menu_refresh"></item>
     <item android:id="@+id/itemClearHistory" android:title="@string/menu_title_clear_history" android:icon="@android:drawable/ic_menu_close_clear_cancel"></item>
     <item android:id="@+id/itemAbout" android:title="@string/menu_item_about" android:icon="@android:drawable/ic_menu_help"></item>
-    <item android:id="@+id/itemNewView" android:title="New View"></item>
 
     
 
