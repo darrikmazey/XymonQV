@@ -110,7 +110,9 @@ public class XymonQVApplication extends Application implements
 		if (key.equals("hostname")) {
 			String hostname = prefs.getString("hostname", "");
 			Log.d(TAG, String.format("SETTING: hostname: %s", hostname));
-			m_server.clear_history();
+			if (m_server != null) {
+				m_server.clear_history();
+			}
 		}
 		m_server = null;
 	}
