@@ -16,7 +16,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
 	static final String TAG = "DBHelper";
 	static final String DB_NAME = "xymonqv.db";
-	static final int DB_VERSION = 4;
+	static final int DB_VERSION = 5;
 	static final String HOST_TABLE = "hosts";
 	static final String STATUS_TABLE = "statuses";
 	static final String RUN_TABLE = "runs";
@@ -26,6 +26,8 @@ public class DBHelper extends SQLiteOpenHelper {
 	static final String C_CREATED_AT = "created_at";
 	static final String C_HOST_ID = "host_id";
 	static final String C_SVC_NAME = "svc_name";
+	static final String C_SVC_ACKED = "svc_acked";
+	static final String C_SVC_ACK_TIME = "svc_ack_time";
 	static final String C_COLOR = "color";
 	static final String C_DURATION = "duration";
 	static final String C_VERSION = "version";
@@ -42,7 +44,7 @@ public class DBHelper extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 		String sql = "create table " + HOST_TABLE + " ( " + C_HOSTNAME + " text primary key, " + C_CREATED_AT + " int)";
 		db.execSQL(sql);
-		sql = "create table " + STATUS_TABLE + " ( " + C_ID + " int primary key, " + C_HOST_ID + " text, " + C_SVC_NAME + " text, " + C_COLOR + " text, " + C_DURATION + " int, " + C_CREATED_AT + " text, " + C_URL + " text)"; 
+		sql = "create table " + STATUS_TABLE + " ( " + C_ID + " int primary key, " + C_HOST_ID + " text, " + C_SVC_NAME + " text, " + C_COLOR + " text, " + C_DURATION + " int, " + C_SVC_ACKED + " int, " + C_SVC_ACK_TIME + " int, " + C_CREATED_AT + " text, " + C_URL + " text)"; 
 		db.execSQL(sql);
 		sql = "create table " + RUN_TABLE + " ( " + C_CREATED_AT + " text primary key, " + C_COLOR + " text, " + C_VERSION + " text)";  
 		db.execSQL(sql);
@@ -50,7 +52,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		Log.d(TAG, String.format("onUpgrade(%d, %d", oldVersion, newVersion));
+		Log.d(TAG, String.format("onUpgrade(%d, %d)", oldVersion, newVersion));
 		db.execSQL("drop table if exists " + HOST_TABLE);
 		db.execSQL("drop table if exists " + STATUS_TABLE);
 		db.execSQL("drop table if exists " + RUN_TABLE);
@@ -112,6 +114,8 @@ public class DBHelper extends SQLiteOpenHelper {
 		values.put(DBHelper.C_SVC_NAME, service.name());
 		values.put(DBHelper.C_COLOR, service.color());
 		values.put(DBHelper.C_DURATION, service.duration());
+		values.put(DBHelper.C_SVC_ACKED, service.acked());
+		values.put(DBHelper.C_SVC_ACK_TIME, service.ack_time());
 		values.put(DBHelper.C_CREATED_AT, last_updated_str);
 		values.put(DBHelper.C_URL, service.url());
 		try {
@@ -193,10 +197,12 @@ public class DBHelper extends SQLiteOpenHelper {
 		while (cursor.moveToNext()) {
 			String svc_name = cursor.getString(2);
 			String svc_color = cursor.getString(3);
-			String svc_duration = cursor.getString(4);
-			String svc_url = cursor.getString(6);
-			Log.d(TAG, String.format("found url [%s] for service [%s]", svc_url, svc_name));
-			XymonService svc = new XymonService(svc_name, svc_color, false, svc_duration, svc_url);
+			int svc_duration = cursor.getInt(4);
+			boolean svc_acked = cursor.getInt(5) == 1;
+			int svc_ack_time = cursor.getInt(6);
+			String svc_url = cursor.getString(7);
+			Log.d(TAG, String.format("found url [%s] for service [%s] duration [%s]", svc_url, svc_name, svc_duration));
+			XymonService svc = new XymonService(svc_name, svc_color, svc_acked, svc_ack_time, svc_duration, svc_url);
 			svc.set_server(host.server());
 			host.add_service(svc);
 		}

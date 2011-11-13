@@ -59,6 +59,10 @@ public class XymonQVHostActivity extends Activity {
 		}
 
 		((TextView) findViewById(R.id.hostname_line)).setText(m_host.hostname());
+		if (m_host.hostname().length() > 26) {
+			((TextView) findViewById(R.id.hostname_line)).setTextSize(14);
+		}
+		
 		((TextView) findViewById(R.id.hostname_updated)).setText(date);
 		
 		LinearLayout ll = (LinearLayout) findViewById(R.id.host_line_container);

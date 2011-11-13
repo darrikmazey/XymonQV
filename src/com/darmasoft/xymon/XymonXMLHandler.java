@@ -20,7 +20,8 @@ public class XymonXMLHandler extends DefaultHandler {
 	private String m_svc_name = null;
 	private String m_svc_color = null;
 	private boolean m_svc_acked = false;
-	private String m_svc_duration = null;
+	private int m_svc_ack_time = 0;
+	private int m_svc_duration = 0;
 	private String m_svc_url = null;
 	
 	public XymonXMLHandler(XymonQuery q) {
@@ -65,10 +66,16 @@ public class XymonXMLHandler extends DefaultHandler {
 			m_svc_name = m_current_character_content;
 		} else if (localName.equals("Status")) {
 			m_svc_color = m_current_character_content;
+		} else if (localName.equals("AckTime")) {
+			m_svc_acked = true;
+			m_svc_ack_time = Integer.valueOf(m_current_character_content);
+		} else if (localName.equals("LastChange")) {
+			m_svc_duration = Integer.valueOf(m_current_character_content);
+			Log.d(TAG, String.format("duration: %d", m_svc_duration));
 		} else if (localName.equals("DetailURL")) {
 			m_svc_url = String.format("%s%s", m_query.server().root_url_stripped(), m_current_character_content);
 		} else if (localName.equals("ServerStatus")) {
-			XymonService s = new XymonService(m_svc_name, m_svc_color, m_svc_acked, m_svc_duration, m_svc_url);
+			XymonService s = new XymonService(m_svc_name, m_svc_color, m_svc_acked, m_svc_ack_time, m_svc_duration, m_svc_url);
 			m_host.add_service(s);
 		}
 		m_in_element = false;

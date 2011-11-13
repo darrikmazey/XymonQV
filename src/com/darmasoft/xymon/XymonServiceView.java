@@ -1,5 +1,7 @@
 package com.darmasoft.xymon;
 
+import java.util.Date;
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PorterDuff;
@@ -15,6 +17,7 @@ import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.LinearLayout.LayoutParams;
 
 public class XymonServiceView extends LinearLayout implements OnClickListener {
 
@@ -50,30 +53,40 @@ public class XymonServiceView extends LinearLayout implements OnClickListener {
 		tv_color.setPadding(5,5,5,5);
 		this.addView(tv_color);
 		
-		TextView tv_hostname = new TextView(context);
-		tv_hostname.setText(service.host().hostname());
-		tv_hostname.setGravity(Gravity.LEFT);
-		tv_hostname.setTextSize(12);
-		tv_hostname.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT, 1));
-		tv_hostname.setPadding(5,5,5,5);
-		this.addView(tv_hostname);
+		LinearLayout layout = new LinearLayout(ctx);
+		layout.setOrientation(VERTICAL);
+		layout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+		layout.setPadding(5,5,5,5);
 		
-		TextView tv_service_name = new TextView(context);
-		tv_service_name.setText(service.name());
-		tv_service_name.setTextSize(12);
-		tv_service_name.setGravity(Gravity.RIGHT);
-		tv_service_name.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT, 1));
-		tv_service_name.setPadding(5, 5, 5, 5);
-		this.addView(tv_service_name);
+		LinearLayout line1 = new LinearLayout(ctx);
+		line1.setOrientation(HORIZONTAL);
+		line1.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, 1));
 		
-		ImageView iv_checkmark = new ImageView(context);
-		if (svc.acked()) {
-			iv_checkmark.setImageDrawable(getResources().getDrawable(R.drawable.ic_checkmark));
-			iv_checkmark.setColorFilter(color);
-		}
-		iv_checkmark.setLayoutParams(new LayoutParams(50,50));
-		iv_checkmark.setPadding(5,5,5,5);
-		this.addView(iv_checkmark);
+		TextView tv_svcname = new TextView(ctx);
+		tv_svcname.setText(service.name());
+		tv_svcname.setTextSize(14);
+		
+		line1.addView(tv_svcname);
+		
+		layout.addView(line1);
+		
+		LinearLayout line2 = new LinearLayout(ctx);
+		line2.setOrientation(HORIZONTAL);
+		line2.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, 1));
+		
+		TextView tv_duration = new TextView(ctx);
+		long du = (long) service.duration();
+		
+		String fts = DateHelper.formatted_elapsed_time(du * 1000);
+		
+		tv_duration.setText(String.format("Down %s", fts));
+		tv_duration.setTextSize(12);
+		
+		line2.addView(tv_duration);
+		
+		layout.addView(line2);
+		
+		addView(layout);
 		
 
     	gestureDetector = new GestureDetector(new MyGestureDetector());
