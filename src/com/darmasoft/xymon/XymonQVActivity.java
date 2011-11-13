@@ -85,9 +85,8 @@ public class XymonQVActivity extends Activity {
     private void update_header_from_settings(String version) {
     	String hostname = this.prefs.getString("hostname", "www.xymon.org");
 		((TextView) findViewById(R.id.hostname_line)).setText(String.format("%s (%s)", hostname, version));	
-		((TextView) findViewById(R.id.status_line)).setText("UNSUPPORTED");
 		Date date = new Date();
-		((TextView) findViewById(R.id.updated_line)).setText(String.format("%tF %tT", date, date));
+		((TextView) findViewById(R.id.hostname_updated)).setText(String.format("%tF %tT", date, date));
     }
     
     private void update_view() {
