@@ -10,6 +10,7 @@ public class XymonService {
 	private String m_svc_color;
 	private boolean m_svc_acked;
 	private int m_svc_ack_time;
+	private String m_svc_ack_text;
 	private int m_svc_duration;
 	private String m_url;
 	private XymonServer m_server;
@@ -36,13 +37,14 @@ public class XymonService {
 		}
 	}
 	
-	public XymonService(String svc_name, String svc_color, boolean svc_acked, int svc_ack_time, int svc_duration, String url) {
+	public XymonService(String svc_name, String svc_color, boolean svc_acked, int svc_ack_time, String svc_ack_text, int svc_duration, String url) {
 		super();
 		m_svc_name = svc_name;
 		m_svc_color = svc_color;
 		m_svc_duration = svc_duration;
 		m_svc_acked = svc_acked;
 		m_svc_ack_time = svc_ack_time;
+		m_svc_ack_text = svc_ack_text;
 		m_url = url;
 	}
 	
@@ -64,6 +66,10 @@ public class XymonService {
 	
 	public int ack_time() {
 		return(m_svc_ack_time);
+	}
+	
+	public String ack_text() {
+		return(m_svc_ack_text);
 	}
 	
 	public String url() {

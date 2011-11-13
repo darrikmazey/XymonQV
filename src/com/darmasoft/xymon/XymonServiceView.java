@@ -17,6 +17,7 @@ import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.LinearLayout.LayoutParams;
 
 public class XymonServiceView extends LinearLayout implements OnClickListener {
@@ -85,7 +86,16 @@ public class XymonServiceView extends LinearLayout implements OnClickListener {
 		line2.addView(tv_duration);
 		
 		layout.addView(line2);
-		
+
+	    ImageView iv_checkmark = new ImageView(context);
+	    if (svc.acked()) {
+	      iv_checkmark.setImageDrawable(getResources().getDrawable(R.drawable.ic_checkmark));
+	      iv_checkmark.setColorFilter(color);
+	    }
+	    iv_checkmark.setLayoutParams(new LayoutParams(50,50));
+	    iv_checkmark.setPadding(5,5,5,5);
+	    this.addView(iv_checkmark);
+	
 		addView(layout);
 		
 
@@ -111,7 +121,11 @@ public class XymonServiceView extends LinearLayout implements OnClickListener {
 
 	@Override
 	public void onClick(View v) {
-		Log.d(TAG, String.format("CLICK: Host [%s] Service [%s]", this.service.host().hostname(), this.service.name()));
+		if (service.acked()) {
+			Date ad = new Date(((long) service.ack_time()) * 1000);
+			String msg = String.format("Acked at: %tF %tT\n\n%s", ad, ad, service.ack_text());
+			Toast.makeText(ctx, msg, Toast.LENGTH_LONG).show();
+		}
 	}
 
 	class MyGestureDetector extends SimpleOnGestureListener {
