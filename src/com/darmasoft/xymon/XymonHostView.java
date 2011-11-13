@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.LinearLayout.LayoutParams;
@@ -72,6 +73,15 @@ public class XymonHostView extends LinearLayout  implements OnClickListener {
 		}
 		
 		layout.addView(line2);
+
+	    ImageView iv_checkmark = new ImageView(context);
+	    if (host.all_services_acked()) {
+	      iv_checkmark.setImageDrawable(getResources().getDrawable(R.drawable.ic_checkmark));
+	      iv_checkmark.setColorFilter(color);
+	    }
+	    iv_checkmark.setLayoutParams(new LayoutParams(50,50));
+	    iv_checkmark.setPadding(5,5,5,5);
+	    this.addView(iv_checkmark);
 		
 		addView(layout);
 		this.setOnClickListener(this);

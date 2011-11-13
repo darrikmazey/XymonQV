@@ -1,5 +1,8 @@
 package com.darmasoft.xymon;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import android.content.Context;
 
 public class XymonService {
@@ -11,6 +14,7 @@ public class XymonService {
 	private boolean m_svc_acked;
 	private int m_svc_ack_time;
 	private String m_svc_ack_text;
+	private String m_svc_ack_by;
 	private int m_svc_duration;
 	private String m_url;
 	private XymonServer m_server;
@@ -22,13 +26,13 @@ public class XymonService {
 		if (parts.length == 3) {
 			m_svc_name = parts[0];
 			m_svc_color = parts[1];
-			m_svc_duration = Integer.valueOf(parts[2]);
+			m_svc_duration = parse_duration_part(parts[2]);
 			m_svc_acked = false;
 		} else if (parts.length == 4) {
 			m_svc_name = parts[0];
 			m_svc_color = parts[1];
 			m_svc_acked = true;
-			m_svc_duration = Integer.valueOf(parts[3]);
+			m_svc_duration = parse_duration_part(parts[3]);
 		} else if (parts.length == 2) {
 			m_svc_name = parts[0];
 			m_svc_color = parts[1];
@@ -37,7 +41,20 @@ public class XymonService {
 		}
 	}
 	
-	public XymonService(String svc_name, String svc_color, boolean svc_acked, int svc_ack_time, String svc_ack_text, int svc_duration, String url) {
+	private int parse_duration_part(String part) {
+		Pattern p = Pattern.compile("(\\d+)h(\\d+)m");
+		Matcher m = p.matcher(part);
+		
+		if (m.find()) {
+			int hours = Integer.valueOf(m.group(1));
+			int minutes = Integer.valueOf(m.group(2));
+			return((int)(System.currentTimeMillis() / 1000.0 - (hours * 60 * 60) - (minutes * 60)));
+		}
+
+		return((int) (System.currentTimeMillis() / 1000.0));
+	}
+	
+	public XymonService(String svc_name, String svc_color, boolean svc_acked, int svc_ack_time, String svc_ack_text, String svc_ack_by, int svc_duration, String url) {
 		super();
 		m_svc_name = svc_name;
 		m_svc_color = svc_color;
@@ -45,6 +62,7 @@ public class XymonService {
 		m_svc_acked = svc_acked;
 		m_svc_ack_time = svc_ack_time;
 		m_svc_ack_text = svc_ack_text;
+		m_svc_ack_by = svc_ack_by;
 		m_url = url;
 	}
 	
@@ -62,6 +80,10 @@ public class XymonService {
 	
 	public void setHost(XymonHost h) {
 		m_svc_host = h;
+	}
+	
+	public String ack_by() {
+		return(m_svc_ack_by);
 	}
 	
 	public int ack_time() {

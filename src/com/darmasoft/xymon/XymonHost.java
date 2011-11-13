@@ -39,6 +39,14 @@ public class XymonHost {
 		return(server);
 	}
 	
+	public boolean all_services_acked() {
+		boolean all = true;
+		for (XymonService s : m_services) {
+			all = all & s.acked();
+		}
+		return(all);
+	}
+	
 	public int service_count_by_color(String c) {
 		int count = 0;
 		for (XymonService s : m_services) {

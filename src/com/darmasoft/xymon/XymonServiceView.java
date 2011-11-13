@@ -123,7 +123,7 @@ public class XymonServiceView extends LinearLayout implements OnClickListener {
 	public void onClick(View v) {
 		if (service.acked()) {
 			Date ad = new Date(((long) service.ack_time()) * 1000);
-			String msg = String.format("Acked at: %tF %tT\n\n%s", ad, ad, service.ack_text());
+			String msg = String.format("Acked at: %tF %tT\nAcked by: %s\n\n%s", ad, ad, service.ack_by(), service.ack_text());
 			Toast.makeText(ctx, msg, Toast.LENGTH_LONG).show();
 		}
 	}
