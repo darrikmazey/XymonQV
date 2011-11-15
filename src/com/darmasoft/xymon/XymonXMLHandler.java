@@ -85,6 +85,9 @@ public class XymonXMLHandler extends DefaultHandler {
 		} else if (localName.equals("ServerStatus")) {
 			XymonService s = new XymonService(m_svc_name, m_svc_color, m_svc_acked, m_svc_ack_time, m_svc_ack_text, m_svc_ack_by, m_svc_duration, m_svc_url);
 			m_host.add_service(s);
+			m_svc_acked = false;
+			m_svc_ack_time = 0;
+			m_svc_ack_text = "";
 		}
 		m_in_element = false;
 	}
