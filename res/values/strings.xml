@@ -70,4 +70,6 @@
         <string name="prefs_summary_use_view">Choose Which View to Use</string>
         <string name="prefs_title_appfeed_filter">Filter</string>
         <string name="prefs_summary_appfeed_filter">Filter string to be used with appfeed.sh</string>
+        <string name="prefs_title_port">Port</string>
+        <string name="prefs_summary_port">Port</string>
 </resources>

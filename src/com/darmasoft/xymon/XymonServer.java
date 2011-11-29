@@ -46,6 +46,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 public class XymonServer {
 	private boolean m_ssl = false;
 	private String m_host;
+	private int m_port;
 	private String m_username;
 	private String m_password;
 	private String m_version = "unknown";
@@ -67,9 +68,10 @@ public class XymonServer {
 	public static final String CRITICAL = "critical";
 	public static final String NON_GREEN = "non_green";
 
-	public XymonServer(String host, boolean ssl, String username, String password, String view, Context context) throws UnsupportedVersionException {
+	public XymonServer(String host, int port, boolean ssl, String username, String password, String view, Context context) throws UnsupportedVersionException {
 		super();
 		m_host = host;
+		m_port = port;
 		m_ssl = ssl;
 		m_username = username;
 		m_password = password;
@@ -118,6 +120,14 @@ public class XymonServer {
 		}
 	}
 
+	public int port() {
+		return(m_port);
+	}
+	
+	public void set_port(int p) {
+		m_port = p;
+	}
+	
 	public void set_filter(String f) {
 		m_filter = f;
 	}
@@ -154,12 +164,20 @@ public class XymonServer {
 	
 	public String root_url() {
 		String scheme = (ssl() ? "https://" : "http://");
-		return(String.format("%s%s/", scheme, host()));
+		if (m_port != 80) {
+			return(String.format("%s%s:%d/", scheme, host(), port()));
+		} else {
+			return(String.format("%s%s/", scheme, host()));
+		}
 	}
 
 	public String root_url_stripped() {
 		String scheme = (ssl() ? "https://" : "http://");
-		return(String.format("%s%s", scheme, host()));	
+		if (m_port != 80) {
+			return(String.format("%s%s:%d", scheme, host(), port()));
+		} else {
+			return(String.format("%s%s", scheme, host()));
+		}
 	}
 
 	public synchronized boolean clear_history() {

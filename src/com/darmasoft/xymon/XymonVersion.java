@@ -22,6 +22,13 @@ abstract public class XymonVersion {
 		 return(m_server.host());
 	 }
 	 
+	 public int port() {
+		 if (m_server == null) {
+			 return(80);
+		 }
+		 return(m_server.port());
+	 }
+	 
 	 public boolean ssl() {
 		 if (m_server == null) {
 			 return(false);
@@ -43,7 +50,11 @@ abstract public class XymonVersion {
 	 
 	 public String root_url() {
 		 String scheme = (ssl() ? "https://" : "http://");
-		 return(String.format("%s%s/", scheme, host()));
+			if (port() != 80) {
+				return(String.format("%s%s:%d/", scheme, host(), port()));
+			} else {
+				return(String.format("%s%s/", scheme, host()));
+			}
 	 }
 	 
 	 abstract public XymonQuery parse_non_green_body();

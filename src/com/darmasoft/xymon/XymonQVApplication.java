@@ -55,9 +55,10 @@ public class XymonQVApplication extends Application implements
 			String password = prefs.getString("password", "");
 			String view = prefs.getString("use_view", NON_GREEN);
 			String filter_string = prefs.getString("appfeed_filter", "");
+			int port = Integer.valueOf(prefs.getString("port", "80"));
 			
 			try {
-				m_server = new XymonServer(hostname, ssl, username, password, view, this);
+				m_server = new XymonServer(hostname, port, ssl, username, password, view, this);
 				m_server.set_filter(filter_string);
 			} catch (UnsupportedVersionException e) {
 				throw e;
