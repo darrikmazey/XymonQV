@@ -164,7 +164,7 @@ public class XymonServer {
 	
 	public String root_url() {
 		String scheme = (ssl() ? "https://" : "http://");
-		if (m_port != 80) {
+		if (m_port != 0) {
 			return(String.format("%s%s:%d/", scheme, host(), port()));
 		} else {
 			return(String.format("%s%s/", scheme, host()));
@@ -173,7 +173,7 @@ public class XymonServer {
 
 	public String root_url_stripped() {
 		String scheme = (ssl() ? "https://" : "http://");
-		if (m_port != 80) {
+		if (m_port != 0) {
 			return(String.format("%s%s:%d", scheme, host(), port()));
 		} else {
 			return(String.format("%s%s", scheme, host()));

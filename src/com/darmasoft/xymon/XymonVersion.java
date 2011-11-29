@@ -50,7 +50,7 @@ abstract public class XymonVersion {
 	 
 	 public String root_url() {
 		 String scheme = (ssl() ? "https://" : "http://");
-			if (port() != 80) {
+			if (port() != 0) {
 				return(String.format("%s%s:%d/", scheme, host(), port()));
 			} else {
 				return(String.format("%s%s/", scheme, host()));
