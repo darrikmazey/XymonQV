@@ -47,6 +47,7 @@ public class XymonServer {
 	private boolean m_ssl = false;
 	private String m_host;
 	private int m_port;
+	private String m_path;
 	private String m_username;
 	private String m_password;
 	private String m_version = "unknown";
@@ -68,7 +69,7 @@ public class XymonServer {
 	public static final String CRITICAL = "critical";
 	public static final String NON_GREEN = "non_green";
 
-	public XymonServer(String host, int port, boolean ssl, String username, String password, String view, Context context) throws UnsupportedVersionException {
+	public XymonServer(String host, int port, String path, boolean ssl, String username, String password, String view, Context context) throws UnsupportedVersionException {
 		super();
 		m_host = host;
 		if (port == 0) {
@@ -80,6 +81,7 @@ public class XymonServer {
 		} else {
 			m_port = port;
 		}
+		m_path = path;
 		m_ssl = ssl;
 		m_username = username;
 		m_password = password;
@@ -128,6 +130,21 @@ public class XymonServer {
 		}
 	}
 
+	public String path() {
+		String p = m_path;
+		if (!p.startsWith("/")) {
+			p = '/' + p;
+		}
+		if (!p.endsWith("/")) {
+			p += "/";
+		}
+		Pattern pat = Pattern.compile("//");
+		while (pat.matcher(p).find()) {
+			p = p.replace("//", "/");
+		}
+		return(p);
+	}
+	
 	public int port() {
 		return(m_port);
 	}
@@ -173,18 +190,18 @@ public class XymonServer {
 	public String root_url() {
 		String scheme = (ssl() ? "https://" : "http://");
 		if (m_port != 0) {
-			return(String.format("%s%s:%d/", scheme, host(), port()));
+			return(String.format("%s%s:%d%s", scheme, host(), port(), path()));
 		} else {
-			return(String.format("%s%s/", scheme, host()));
+			return(String.format("%s%s%s", scheme, host(), path()));
 		}
 	}
 
 	public String root_url_stripped() {
 		String scheme = (ssl() ? "https://" : "http://");
 		if (m_port != 0) {
-			return(String.format("%s%s:%d", scheme, host(), port()));
+			return(String.format("%s%s:%d%s", scheme, host(), port(), path()));
 		} else {
-			return(String.format("%s%s", scheme, host()));
+			return(String.format("%s%s%s", scheme, host(), path()));
 		}
 	}
 

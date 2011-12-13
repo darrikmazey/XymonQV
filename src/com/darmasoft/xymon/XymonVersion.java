@@ -29,6 +29,13 @@ abstract public class XymonVersion {
 		 return(m_server.port());
 	 }
 	 
+	 public String path() {
+		 if (m_server == null) {
+			 return("/");
+		 }
+		 return(m_server.path());
+	 }
+	 
 	 public boolean ssl() {
 		 if (m_server == null) {
 			 return(false);
@@ -51,9 +58,9 @@ abstract public class XymonVersion {
 	 public String root_url() {
 		 String scheme = (ssl() ? "https://" : "http://");
 			if (port() != 0) {
-				return(String.format("%s%s:%d/", scheme, host(), port()));
+				return(String.format("%s%s:%d%s", scheme, host(), port(), path()));
 			} else {
-				return(String.format("%s%s/", scheme, host()));
+				return(String.format("%s%s%s", scheme, host(), path()));
 			}
 	 }
 	 

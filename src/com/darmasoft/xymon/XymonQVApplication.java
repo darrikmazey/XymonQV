@@ -62,9 +62,10 @@ public class XymonQVApplication extends Application implements
 			} catch (NumberFormatException e) {
 				port = 0;
 			}
+			String path = prefs.getString("path", "/");
 			
 			try {
-				m_server = new XymonServer(hostname, port, ssl, username, password, view, this);
+				m_server = new XymonServer(hostname, port, path, ssl, username, password, view, this);
 				m_server.set_filter(filter_string);
 			} catch (UnsupportedVersionException e) {
 				throw e;

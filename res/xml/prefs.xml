@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
-    <EditTextPreference android:summary="@string/prefs_summary_hostname" android:title="@string/prefs_title_hostname" android:key="hostname" android:defaultValue="www.xymon.org"/><EditTextPreference android:key="port" android:title="@string/prefs_title_port" android:summary="@string/prefs_summary_port"/><CheckBoxPreference
+    <EditTextPreference android:summary="@string/prefs_summary_hostname" android:title="@string/prefs_title_hostname" android:key="hostname" android:defaultValue="www.xymon.org"/><EditTextPreference android:key="port" android:title="@string/prefs_title_port" android:summary="@string/prefs_summary_port"/><EditTextPreference android:summary="@string/prefs_summary_path" android:key="path" android:title="@string/prefs_title_path"/><CheckBoxPreference
         android:disableDependentsState="false"
         android:key="use_ssl"
         android:summary="@string/prefs_summary_ssl"
@@ -46,6 +46,7 @@
             android:key="enable_debug_log"/>
         
     </PreferenceCategory>
+    
     
     
     

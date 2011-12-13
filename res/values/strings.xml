@@ -71,5 +71,7 @@
         <string name="prefs_title_appfeed_filter">Filter</string>
         <string name="prefs_summary_appfeed_filter">Filter string to be used with appfeed.sh</string>
         <string name="prefs_title_port">Port</string>
-        <string name="prefs_summary_port">Port</string>
+        <string name="prefs_summary_port">Optional Port</string>
+        <string name="prefs_title_path">Path</string>
+        <string name="prefs_summary_path">Optional Path</string>
 </resources>
