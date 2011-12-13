@@ -55,7 +55,13 @@ public class XymonQVApplication extends Application implements
 			String password = prefs.getString("password", "");
 			String view = prefs.getString("use_view", NON_GREEN);
 			String filter_string = prefs.getString("appfeed_filter", "");
-			int port = Integer.valueOf(prefs.getString("port", "0"));
+			String port_string = prefs.getString("port", "0");
+			int port = 0;
+			try {
+				port = Integer.valueOf(prefs.getString("port", "0"));
+			} catch (NumberFormatException e) {
+				port = 0;
+			}
 			
 			try {
 				m_server = new XymonServer(hostname, port, ssl, username, password, view, this);

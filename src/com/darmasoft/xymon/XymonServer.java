@@ -71,7 +71,15 @@ public class XymonServer {
 	public XymonServer(String host, int port, boolean ssl, String username, String password, String view, Context context) throws UnsupportedVersionException {
 		super();
 		m_host = host;
-		m_port = port;
+		if (port == 0) {
+			if (ssl) {
+				m_port = 443;
+			} else {
+				m_port = 80;
+			}
+		} else {
+			m_port = port;
+		}
 		m_ssl = ssl;
 		m_username = username;
 		m_password = password;
